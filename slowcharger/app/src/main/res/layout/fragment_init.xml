@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/initLayout"
+    android:layout_width="800dp"
+    android:layout_height="424dp"
+    tools:context=".pages.InitFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <ImageView
+        android:id="@+id/btnQr"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="80dp"
+        android:visibility="invisible"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/textViewMemberUnitInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/memChargingUnit"
+        android:textSize="22sp"
+        android:layout_marginStart="-60dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintLeft_toLeftOf="@id/btnQr"
+        app:layout_constraintBottom_toTopOf="@id/btnQr"/>
+
+    <TextView
+        android:id="@+id/txtInitMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:gravity="center"
+        android:text="@string/initMessage"
+        android:textSize="36sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <ImageView
+        android:id="@+id/imgDot"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="9dp"
+        android:background="@drawable/dot_circle"
+        android:importantForAccessibility="no"
+        app:layout_constraintTop_toTopOf="@id/imageViewClick"
+        app:layout_constraintStart_toStartOf="@id/imageViewClick"
+        app:layout_constraintEnd_toEndOf="@id/imageViewClick"/>
+
+
+    <ImageView
+        android:id="@+id/imageViewClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/click"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="48sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtInitMessage"
+        app:layout_constraintVertical_bias="0.15"
+        tools:ignore="contentDescription" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

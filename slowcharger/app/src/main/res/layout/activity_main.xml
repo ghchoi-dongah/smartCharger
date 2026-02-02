@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="800dp"
+    android:layout_height="480dp"
+    android:orientation="horizontal"
+    android:background="@color/background"
+    tools:context=".MainActivity">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/frameTop"
+        android:name="com.dongah.smartcharger.pages.HeaderFragment"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:tag="frameTop"
+        tools:layout="@layout/fragment_header"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/frameBody"
+        android:layout_width="match_parent"
+        android:layout_height="424dp"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/frameTop"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/imgNetwork"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/nonetwork"
+        android:layout_marginStart="20dp"
+        android:importantForAccessibility="no"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewChargerId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toEndOf="@id/imgNetwork"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+    <TextView
+        android:id="@+id/textViewCallCenterValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1800-3188"
+        android:textSize="24sp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewCallCenter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" | 고객센터: "
+        android:textSize="24sp"
+        app:layout_constraintEnd_toStartOf="@id/textViewCallCenterValue"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+
+    <TextView
+        android:id="@+id/txtFwVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1.0.0"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@id/textViewCallCenter"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+    <TextView
+        android:id="@+id/textViewFirmware"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" | FW VER: "
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@id/txtFwVersion"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/txtVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" DEVW 1.0.0"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@id/textViewFirmware"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+    <TextView
+        android:id="@+id/textViewSoftware"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" | VER: "
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@id/txtVersion"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+    <TextView
+        android:id="@+id/textViewTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="08:08 AM"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@id/textViewSoftware"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
