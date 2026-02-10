@@ -1,7 +1,5 @@
 package com.dongah.smartcharger.pages;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -15,7 +13,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.LinearInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,7 +22,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -79,11 +77,10 @@ public class InitFragment extends Fragment implements View.OnClickListener {
     private String mParam1;
     private String mParam2;
 
-    ImageView imgDot, btnQr;
-    TextView txtInitMessage;
-    TextView textViewMemberUnitInput;
-    ConstraintLayout initLayout;
-    ObjectAnimator object;
+    ImageView btnQr;
+    Animation animBlink;
+    View viewCircle;
+    TextView textViewMemberUnitInput,textViewInitMessage ;
     ChargerConfiguration chargerConfiguration;
     Handler unitPriceHandler;
     SharedModel sharedModel;
@@ -126,24 +123,14 @@ public class InitFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_init, container, false);
-        textViewMemberUnitInput = view.findViewById(R.id.textViewMemberUnitInput);
-        initLayout = view.findViewById(R.id.initLayout);
-        initLayout.setOnClickListener(this);
         ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.INIT);
-        txtInitMessage = view.findViewById(R.id.txtInitMessage);
-
-        imgDot = view.findViewById(R.id.imgDot);
-        object = ObjectAnimator.ofFloat(imgDot, "Alpha", 1.0f, 0.2f);
-        object.setInterpolator(new LinearInterpolator());
-        object.setDuration(1500);
-        object.setRepeatCount(ValueAnimator.INFINITE);
-        object.start();
-
-        imgDot.setOnClickListener(this);
-        txtInitMessage.setOnClickListener(this);
-
+        textViewMemberUnitInput = view.findViewById(R.id.textViewMemberUnitInput);
+        animBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.blink);
+        viewCircle = view.findViewById(R.id.viewCircle);
+        viewCircle.setOnClickListener(this);
+        textViewInitMessage = view.findViewById(R.id.textViewInitMessage);
+        textViewInitMessage.startAnimation(animBlink);
 
         btnQr = view.findViewById(R.id.btnQr);
         btnQr.setOnClickListener(this);
@@ -180,11 +167,17 @@ public class InitFragment extends Fragment implements View.OnClickListener {
     public void onDetach() {
         super.onDetach();
         try {
-            if (object != null) object.cancel();
+            if (unitPriceHandler != null) {
+                unitPriceHandler.removeCallbacksAndMessages(null);
+                unitPriceHandler.removeMessages(0);
+                unitPriceHandler = null;
+            }
+            animBlink.cancel();
+            animBlink = null;
             requestStrings[0] = String.valueOf(0);
             sharedModel.setMutableLiveData(requestStrings);
         } catch (Exception e) {
-            logger.error(" Init Fragment onDetach error : {}" , e.getMessage());
+            logger.error("InitFragment onDetach error : {}" , e.getMessage());
         }
     }
 
@@ -194,65 +187,62 @@ public class InitFragment extends Fragment implements View.OnClickListener {
             int getId = v.getId();
             ChargingCurrentData chargingCurrentData = ((MainActivity) MainActivity.mContext).getClassUiProcess().getChargingCurrentData();
             chargingCurrentData.onCurrentDataClear();
-            if (Objects.equals(getId, R.id.btnQr)) {
-                ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.QR_CODE);
-                ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.QR_CODE, "QR_CODE", null);
-            } else {
-                if (Objects.equals(chargerConfiguration.getAuthMode(), "0")) {
-                    if (!onUnitPrice()) {
-                        Toast.makeText(getActivity(), "단가 정보가 없습니다. \n잠시 후, 충전하세요!", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    try {
-                        SocketState socketState = ((MainActivity) MainActivity.mContext).getSocketReceiveMessage().getSocket().getState();
-                        if (Objects.equals(socketState, SocketState.OPEN)) {
-                            ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.AUTH_SELECT);
-                            ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.AUTH_SELECT, "AUTH_SELECT", null);
-                        } else {
-                            Toast.makeText(getActivity(), "서버 연결 DISCONNECT. \n충전을 할 수 없습니다.", Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (Exception e) {
-                        Toast.makeText(getActivity(), "서버 연결 DISCONNECT. \n충전을 할 수 없습니다.", Toast.LENGTH_SHORT).show();
-                        logger.error(e.getMessage());
-                    }
-                } else if (Objects.equals(chargerConfiguration.getAuthMode(), "4")) {
-                    // local 회원 인증용
-                    double testPrice = Double.parseDouble(((MainActivity) MainActivity.mContext).getChargerConfiguration().getTestPrice());
-                    ((MainActivity) MainActivity.mContext).getClassUiProcess().getChargingCurrentData().setPowerUnitPrice(testPrice);
-                    ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.MEMBER_CARD);
-                    ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.MEMBER_CARD, "MEMBER_CARD", null);
-                } else {
-                    double testPrice = Double.parseDouble(((MainActivity) MainActivity.mContext).getChargerConfiguration().getTestPrice());
-                    ((MainActivity) MainActivity.mContext).getClassUiProcess().getChargingCurrentData().setPowerUnitPrice(testPrice);
-                    ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.PLUG_CHECK);
-                    ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.PLUG_CHECK, "PLUG_CHECK", null);
+
+            if (!Objects.equals(v.getId(), R.id.viewCircle)) return;
+            if (Objects.equals(chargerConfiguration.getAuthMode(), "0")) {
+                if (!onUnitPrice()) {
+                    Toast.makeText(getActivity(), "단가 정보가 없습니다. \n잠시 후, 충전하세요!", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+                try {
+                    SocketState socketState = ((MainActivity) MainActivity.mContext).getSocketReceiveMessage().getSocket().getState();
+                    if (Objects.equals(socketState, SocketState.OPEN)) {
+                        ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.AUTH_SELECT);
+                        ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.AUTH_SELECT, "AUTH_SELECT", null);
+                    } else {
+                        Toast.makeText(getActivity(), "서버 연결 DISCONNECT. \n충전을 할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(getActivity(), "서버 연결 DISCONNECT. \n충전을 할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                    logger.error(e.getMessage());
+                }
+            } else if (Objects.equals(chargerConfiguration.getAuthMode(), "4")) {
+                // local 회원 인증용
+                double testPrice = Double.parseDouble(((MainActivity) MainActivity.mContext).getChargerConfiguration().getTestPrice());
+                ((MainActivity) MainActivity.mContext).getClassUiProcess().getChargingCurrentData().setPowerUnitPrice(testPrice);
+                ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.MEMBER_CARD);
+                ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.MEMBER_CARD, "MEMBER_CARD", null);
+            } else {
+                double testPrice = Double.parseDouble(((MainActivity) MainActivity.mContext).getChargerConfiguration().getTestPrice());
+                ((MainActivity) MainActivity.mContext).getClassUiProcess().getChargingCurrentData().setPowerUnitPrice(testPrice);
+                ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.PLUG_CHECK);
+                ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.PLUG_CHECK, "PLUG_CHECK", null);
+            }
 
-                // PLC modem used
-                ((MainActivity) MainActivity.mContext).getControlBoard().getTxData().setPwmDuty((short) 100);
+            // PLC modem used
+            ((MainActivity) MainActivity.mContext).getControlBoard().getTxData().setPwmDuty((short) 100);
 
-                packetRequest = new PacketRequest((byte) 0x71, (short) 8, (byte) 0x00);
-                short duty = ((MainActivity) MainActivity.mContext).getControlBoard().getRxData().getCsPwmDuty();
-                short cpVoltage = ((MainActivity) MainActivity.mContext).getControlBoard().getRxData().getCsCpVoltage();
-                report = packetRequest.onMakeRequestData(duty, cpVoltage);
-                ((MainActivity) MainActivity.mContext).getPlcModem().onSend(report);
+            packetRequest = new PacketRequest((byte) 0x71, (short) 8, (byte) 0x00);
+            short duty = ((MainActivity) MainActivity.mContext).getControlBoard().getRxData().getCsPwmDuty();
+            short cpVoltage = ((MainActivity) MainActivity.mContext).getControlBoard().getRxData().getCsCpVoltage();
+            report = packetRequest.onMakeRequestData(duty, cpVoltage);
+            ((MainActivity) MainActivity.mContext).getPlcModem().onSend(report);
 
-                //ConfigSetupReq  0x70
-                ConfigSetupReq configSetupReq = new ConfigSetupReq((byte) 0x70, (short) 36);
-                report = configSetupReq.makeConfigSetupReq();
-                ((MainActivity) MainActivity.mContext).getPlcModem().onSend(report);
+            //ConfigSetupReq  0x70
+            ConfigSetupReq configSetupReq = new ConfigSetupReq((byte) 0x70, (short) 36);
+            report = configSetupReq.makeConfigSetupReq();
+            ((MainActivity) MainActivity.mContext).getPlcModem().onSend(report);
 
 
-                //ConfigCheck_Request 0x79
-                packetRequest = new PacketRequest((byte) 0x79, (short) 8, (byte) 0x00);
-                report = packetRequest.onMakeRequestData(duty, cpVoltage);
-                ((MainActivity) MainActivity.mContext).getPlcModem().onSend(report);
+            //ConfigCheck_Request 0x79
+            packetRequest = new PacketRequest((byte) 0x79, (short) 8, (byte) 0x00);
+            report = packetRequest.onMakeRequestData(duty, cpVoltage);
+            ((MainActivity) MainActivity.mContext).getPlcModem().onSend(report);
 
 //                StartRequest startRequest = new StartRequest((byte) 0x72, (short) 16, (byte) 0x00);
-                StartRequest startRequest = new StartRequest((byte) 0x72, (short) 16, (byte) 0x02);
-                report = startRequest.makeStartRequest((byte) 0x05);         //EV: 5%, test : 50% ==> 0x32
-                ((MainActivity) MainActivity.mContext).getPlcModem().onSend(report);
-            }
+            StartRequest startRequest = new StartRequest((byte) 0x72, (short) 16, (byte) 0x02);
+            report = startRequest.makeStartRequest((byte) 0x05);         //EV: 5%, test : 50% ==> 0x32
+            ((MainActivity) MainActivity.mContext).getPlcModem().onSend(report);
         } catch (Exception e) {
             logger.error(" init onClick error : {}", e.getMessage());
         }
@@ -315,11 +305,11 @@ public class InitFragment extends Fragment implements View.OnClickListener {
 
                             if ((now.isEqual(startAt) || now.isAfter(startAt)) && (now.isBefore(endAt) || now.isEqual(endAt))) {
                                 resultMap.put(userType, obj.getInt("price"));
-                                break; // 그 userType에 대해 단가 찾았으면 다음 라인으로 넘어감
+                                break; // 그 userType에 대한 단가 정보를 찾으면 다음 라인으로 넘어감
                             }
                         }
 
-                        // 모든 userType이 다 찾아졌으면 종료
+                        // 모든 userType을 다 찾으면 종료
                         if (resultMap.keySet().containsAll(userTypes)) {
                             break;
                         }
@@ -344,10 +334,11 @@ public class InitFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void run() {
                         try {
-                            //사용 단가 갖도 오기
+                            //사용 단가 갖고 오기
                             Set<String> userTypes = new HashSet<>(Arrays.asList("A", "B"));
                             Map<String, Integer> unitPrices = onFindUnitPrices(userTypes);
-                            textViewMemberUnitInput.setText(getString(R.string.memChargingUnit) +  String.format(" %s 원", unitPrices.getOrDefault("A", 0)));
+//                            textViewMemberUnitInput.setText(getString(R.string.memChargingUnit) +  String.format(" %s 원", unitPrices.getOrDefault("A", 0)));
+                            textViewMemberUnitInput.setText(getString(R.string.chargeUnitFormat, String.valueOf(unitPrices.getOrDefault("A", 0))));
                             ((MainActivity) MainActivity.mContext).getClassUiProcess().getChargingCurrentData().setPowerUnitPrice(Double.parseDouble(String.valueOf(unitPrices.getOrDefault("A", 0))));
                         } catch (Exception e) {
                             logger.error("unitPriceHandler  : {}", e.getMessage());

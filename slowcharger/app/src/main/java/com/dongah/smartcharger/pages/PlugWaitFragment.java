@@ -1,8 +1,10 @@
 package com.dongah.smartcharger.pages;
 
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +51,9 @@ public class PlugWaitFragment extends Fragment {
     int cnt = 0;
     boolean imgChange = false;
     TextView txtPlugWaitMessage;
+
+    ImageView imageViewLoading;
+    AnimationDrawable animationDrawable;
     ImageView imgInlet, imgPlugConnector;
     AnimationDrawable aniInlet, aniPlug;
     Handler countHandler;
@@ -91,19 +96,11 @@ public class PlugWaitFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_plug_wait, container, false);
-        imgChange = false;
-
         txtPlugWaitMessage = view.findViewById(R.id.txtPlugWaitMessage);
-        imgInlet = view.findViewById(R.id.imgInlet);
-        imgPlugConnector = view.findViewById(R.id.imgPlugConnector);
-        imgPlugConnector.setBackgroundResource(R.drawable.plugconnecting);
-        aniPlug = (AnimationDrawable) imgPlugConnector.getBackground();
-
-        imgInlet.setBackgroundResource(R.drawable.plugbackground);
-        aniInlet = (AnimationDrawable) imgInlet.getBackground();
-
+        imageViewLoading = view.findViewById(R.id.imageViewLoading);
+        imageViewLoading.setBackgroundResource(R.drawable.ani_loading);
+        animationDrawable = (AnimationDrawable) imageViewLoading.getBackground();
         chargerConfiguration = ((MainActivity) MainActivity.mContext).getChargerConfiguration();
         chargingCurrentData = ((MainActivity) MainActivity.mContext).getClassUiProcess().getChargingCurrentData();
 
@@ -117,7 +114,7 @@ public class PlugWaitFragment extends Fragment {
 //            MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.mContext, R.raw.plugwait);
 //            mediaPlayer.start();
             cnt = 0;
-            aniPlug.start();
+            animationDrawable.start();
 
             ((MainActivity) MainActivity.mContext).runOnUiThread(new Runnable() {
                 @Override
@@ -128,9 +125,6 @@ public class PlugWaitFragment extends Fragment {
                         public void run() {
                             cnt++;
                             if (Objects.equals(cnt, GlobalVariables.getConnectionTimeOut())) {
-                                countHandler.removeCallbacks(countRunnable);
-                                countHandler.removeCallbacksAndMessages(null);
-                                countHandler.removeMessages(0);
                                 // 충전기 종료
                                 ((MainActivity) MainActivity.mContext).getControlBoard().getTxData().setMainMC(false);
                                 ((MainActivity) MainActivity.mContext).getControlBoard().getTxData().setPwmDuty((short) 100);
@@ -161,18 +155,12 @@ public class PlugWaitFragment extends Fragment {
                             }
 
                             //connecting wait
-                            if (!imgChange &&
-                                    ((MainActivity) MainActivity.mContext).getControlBoard().getRxData().isCsPilot()) {
-                                imgChange = true;
+                            if (((MainActivity) MainActivity.mContext).getControlBoard().getRxData().isCsPilot()) {
                                 cnt = 0;
-                                if (aniPlug.isRunning()) {
-//                                    MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.mContext, R.raw.connectcheck);
-//                                    mediaPlayer.start();
-                                    aniPlug.stop();
-                                    imgPlugConnector.setBackgroundResource(R.drawable.plugwait12);
-                                    aniInlet.start();
+                                if (txtPlugWaitMessage.getTag() == null || !(boolean) txtPlugWaitMessage.getTag()) {
+                                    txtPlugWaitMessage.setText(R.string.EVCheckMessage);
+                                    txtPlugWaitMessage.setTag(true);
                                 }
-                                txtPlugWaitMessage.setText(R.string.plugStartMessage);
                             }
                         }
                     };
@@ -185,6 +173,34 @@ public class PlugWaitFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        try {
+            if (animationDrawable != null) {
+                animationDrawable.stop();
+            }
+
+            if (imageViewLoading != null) {
+                Drawable bg = imageViewLoading.getBackground();
+                if (bg instanceof AnimationDrawable) {
+                    ((AnimationDrawable) bg).stop();
+                }
+                imageViewLoading.setBackground(null);
+            }
+
+            if (countHandler != null) {
+                countHandler.removeCallbacksAndMessages(null);
+                countHandler = null;
+            }
+            countRunnable = null;
+
+        } catch (Exception e) {
+            Log.e("PlugWaitFragment", "onDestroyView error", e);
+            logger.error("PlugWaitFragment onDestroyView error : {}", e.getMessage());
+        }
+        super.onDestroyView();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         try {
@@ -193,18 +209,12 @@ public class PlugWaitFragment extends Fragment {
             requestStrings[0] = "0";
             sharedModel.setMutableLiveData(requestStrings);
 
-            countHandler.removeCallbacks(countRunnable);
-            countHandler.removeCallbacksAndMessages(null);
-            countHandler.removeMessages(0);
-            if (aniPlug != null) {
-                aniPlug.stop();
-                imgPlugConnector.setBackground(null);
+            if (countHandler != null) {
+                countHandler.removeCallbacks(countRunnable);
+                countHandler.removeCallbacksAndMessages(null);
+                countHandler.removeMessages(0);
+                countHandler = null;
             }
-            if (aniInlet != null) {
-                aniInlet.stop();
-                imgInlet.setBackground(null);
-            }
-
         } catch (Exception e) {
             logger.error("PlugWaitFragment onDetach : {}", e.getMessage());
         }

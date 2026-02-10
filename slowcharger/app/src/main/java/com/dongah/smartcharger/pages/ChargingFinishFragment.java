@@ -24,6 +24,7 @@ import com.dongah.smartcharger.handler.ProcessHandler;
 import com.dongah.smartcharger.websocket.ocpp.core.ChargePointStatus;
 import com.dongah.smartcharger.websocket.socket.SocketReceiveMessage;
 import com.dongah.smartcharger.websocket.socket.SocketState;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ public class ChargingFinishFragment extends Fragment implements View.OnClickList
 
 
     Button btnStopConfirm;
-
+    CircularProgressIndicator progressCircular;
     TextView  txtSoc, txtAmountOfCharge, txtChargePay, txtChargeTime;
     ClassUiProcess classUiProcess;
     ChargingCurrentData chargingCurrentData;
@@ -94,15 +95,14 @@ public class ChargingFinishFragment extends Fragment implements View.OnClickList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_charging_finish, container, false);
-
         txtSoc = view.findViewById(R.id.txtSoc);
         txtAmountOfCharge = view.findViewById(R.id.txtAmountOfCharge);
         txtChargePay = view.findViewById(R.id.txtChargePay);
         txtChargeTime = view.findViewById(R.id.txtChargeTime);
         btnStopConfirm = view.findViewById(R.id.btnStopConfirm);
         btnStopConfirm.setOnClickListener(this);
+        progressCircular = view.findViewById(R.id.progressCircular);
 
         classUiProcess = ((MainActivity) MainActivity.mContext).getClassUiProcess();
         chargingCurrentData = classUiProcess.getChargingCurrentData();
@@ -114,7 +114,7 @@ public class ChargingFinishFragment extends Fragment implements View.OnClickList
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         try {
-
+            progressCircular.isIndeterminate();
 //            MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.mContext, R.raw.chargingfinsih);
 //            mediaPlayer.start();
             //unplug check 후 초기 화면
@@ -134,10 +134,12 @@ public class ChargingFinishFragment extends Fragment implements View.OnClickList
                 @SuppressLint("SetTextI18n")
                 @Override
                 public void run() {
-                    txtSoc.setText(chargingCurrentData.getSoc() == 0 ? "커넥터 정리해 주세요." : chargingCurrentData.getSoc() + " %");
+                    txtSoc.setText(chargingCurrentData.getSoc() == 0 ? "미지원" : chargingCurrentData.getSoc() + "%");
                     txtAmountOfCharge.setText(powerFormatter.format(chargingCurrentData.getPowerMeterUse() * 0.001) + " kWh");
                     txtChargePay.setText(payFormatter.format(chargingCurrentData.getPowerMeterUsePay()) + " 원") ;
                     txtChargeTime.setText(chargingCurrentData.getChargingUseTime());
+                    progressCircular.setProgress(chargingCurrentData.getSoc(), true);
+
                     try {
                         //result price
                         ChargerConfiguration chargerConfiguration = ((MainActivity) MainActivity.mContext).getChargerConfiguration();

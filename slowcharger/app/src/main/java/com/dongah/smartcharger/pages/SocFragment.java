@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -43,8 +42,7 @@ public class SocFragment extends Fragment implements View.OnClickListener {
 
     TextView txtSocInput;
     SeekBar seekBar;
-    Button btnConfirm;
-    ImageButton imgPlus, imgMinus;
+    Button btnConfirm, imgPlus, imgMinus;
     int socValue ;
     int MIN_VALUE = 5;
 
@@ -83,7 +81,6 @@ public class SocFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_soc, container, false);
         seekBar = view.findViewById(R.id.seekBar);
         txtSocInput = view.findViewById(R.id.txtSocInput);

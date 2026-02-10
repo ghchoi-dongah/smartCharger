@@ -1,12 +1,16 @@
 package com.dongah.smartcharger.pages;
 
+import android.annotation.SuppressLint;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,7 +43,9 @@ public class MemberCardFragment extends Fragment implements View.OnClickListener
     private String mParam1;
     private String mParam2;
 
+    int MAX_TIME = 20;
     int cnt = 0;
+    TextView textViewTagTimer;
     ImageView imgMemberCardTagging;
     AnimationDrawable animationDrawable;
     Handler countHandler;
@@ -79,19 +85,19 @@ public class MemberCardFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_member_card, container, false);
         imgMemberCardTagging = view.findViewById(R.id.imgMemberCardTagging);
         imgMemberCardTagging.setBackgroundResource(R.drawable.membercardtagging);
         animationDrawable = (AnimationDrawable) imgMemberCardTagging.getBackground();
+        textViewTagTimer = view.findViewById(R.id.textViewTagTimer);
 
         //rfCard ready
         ((MainActivity) MainActivity.mContext).getRfCardReaderReceive().rfCardReadRequest();
 
-
         return view;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -101,6 +107,7 @@ public class MemberCardFragment extends Fragment implements View.OnClickListener
 //            mediaPlayer.start();
 
             animationDrawable.start();
+            textViewTagTimer.setText(MAX_TIME + "초");
 
             //count
             ((MainActivity) MainActivity.mContext).runOnUiThread(new Runnable() {
@@ -108,12 +115,14 @@ public class MemberCardFragment extends Fragment implements View.OnClickListener
                 public void run() {
                     countHandler = new Handler();
                     countRunnable = new Runnable() {
+                        @SuppressLint("SetTextI18n")
                         @Override
                         public void run() {
                             cnt++;
                             if (Objects.equals(cnt, 20)) {
                                 ((MainActivity) MainActivity.mContext).getClassUiProcess().onHome();
                             } else {
+                                textViewTagTimer.setText((MAX_TIME - cnt) + "초");
                                 countHandler.postDelayed(countRunnable, 1000);
                             }
                         }
@@ -128,24 +137,46 @@ public class MemberCardFragment extends Fragment implements View.OnClickListener
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        animationDrawable.stop();
-        ((AnimationDrawable) imgMemberCardTagging.getBackground()).stop();
-        imgMemberCardTagging.setBackground(null);
-        if (countHandler != null) {
-            countHandler.removeCallbacks(countRunnable);
-            countHandler.removeCallbacksAndMessages(null);
-            countHandler.removeMessages(0);
-        }
-    }
-
-    @Override
     public void onClick(View v) {
         int getId =v.getId();
         if (Objects.equals(getId, R.id.imgMemberCardTagging)) {
             ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.MEMBER_CARD_WAIT);
             ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.MEMBER_CARD_WAIT, "MEMBER_CARD_WAIT", "");
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        try {
+            if (animationDrawable != null) {
+                animationDrawable.stop();
+            }
+
+            if (imgMemberCardTagging != null) {
+                Drawable bg = imgMemberCardTagging.getBackground();
+                if (bg instanceof AnimationDrawable) {
+                    ((AnimationDrawable) bg).stop();
+                }
+                imgMemberCardTagging.setBackground(null);
+            }
+        } catch (Exception e) {
+            Log.e("MemberCardFragment", "onDestroyView error", e);
+            logger.error("MemberCardFragment onDestroyView error : {}", e.getMessage());
+        }
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        try {
+            if (countHandler != null) {
+                countHandler.removeCallbacks(countRunnable);
+                countHandler.removeCallbacksAndMessages(null);
+                countHandler.removeMessages(0);
+            }
+        } catch (Exception e) {
+            logger.error("MemberCardFragment onDetach error : {}", e.getMessage());
         }
     }
 }

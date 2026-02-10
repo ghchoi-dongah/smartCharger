@@ -1,15 +1,14 @@
 package com.dongah.smartcharger.pages;
 
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -44,14 +43,12 @@ public class MessageYesNoFragment extends Fragment implements View.OnClickListen
     private String mParam1;
     private String mParam2;
 
-    LinearLayout loadingContainer;
-    final String[] colors = { "#FFD6BA", "#FABD8C", "#F5A55D", "#EF8C2F", "#EA7300"};
-    final int[] dotIds = { R.id.dot1, R.id.dot2, R.id.dot3, R.id.dot4, R.id.dot5 };
-    Handler handler;
-    int currentStep = 0;
     View view;
     TextView txtMessage;
     Button btnCancel, btnConfirm;
+    ImageView imageViewLoading;
+    AnimationDrawable animationDrawable;
+
 
     public MessageYesNoFragment() {
         // Required empty public constructor
@@ -87,14 +84,15 @@ public class MessageYesNoFragment extends Fragment implements View.OnClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_message_yes_no, container, false);
         txtMessage = view.findViewById(R.id.txtMessage);
-        loadingContainer = view.findViewById(R.id.loadingContainer);
         btnCancel = view.findViewById(R.id.btnCancel);
         btnCancel.setOnClickListener(this);
         btnConfirm = view.findViewById(R.id.btnConfirm);
         btnConfirm.setOnClickListener(this);
+        imageViewLoading = view.findViewById(R.id.imageViewLoading);
+        imageViewLoading.setBackgroundResource(R.drawable.ani_loading);
+        animationDrawable = (AnimationDrawable) imageViewLoading.getBackground();
         return view;
     }
 
@@ -119,12 +117,10 @@ public class MessageYesNoFragment extends Fragment implements View.OnClickListen
                 ((MainActivity) MainActivity.mContext).getControlBoard().getTxData().setMainMC(false);
                 ((MainActivity) MainActivity.mContext).getControlBoard().getTxData().setPwmDuty((short) 100);
                 txtMessage.setText(R.string.stoppingMessage);
-                loadingContainer.setVisibility(View.VISIBLE);
                 btnConfirm.setVisibility(View.INVISIBLE);
                 btnCancel.setVisibility(View.INVISIBLE);
-                //
-                handler = new Handler(Looper.getMainLooper());
-                startDotLoop(view);
+                imageViewLoading.setVisibility(View.VISIBLE);
+                animationDrawable.start();
 
                 StopAllRequest stopAllRequest = new StopAllRequest((byte) 0x76, (short) 8, (byte) 0x00);
 
@@ -137,39 +133,29 @@ public class MessageYesNoFragment extends Fragment implements View.OnClickListen
         }
     }
 
-
-    private void startDotLoop(View root) {
-        currentStep = 0;
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (currentStep < dotIds.length) {
-                    View dot = root.findViewById(dotIds[currentStep]);
-                    GradientDrawable drawable = new GradientDrawable();
-                    drawable.setShape(GradientDrawable.OVAL);
-                    drawable.setColor(Color.parseColor(colors[currentStep]));
-                    dot.setBackground(drawable);
-                    dot.setVisibility(View.VISIBLE);
-                    currentStep++;
-                    handler.postDelayed(this, 200);
-                } else {
-                    handler.postDelayed(() -> {
-                        for (int id : dotIds) {
-                            View dot = root.findViewById(id);
-                            dot.setVisibility(View.INVISIBLE);
-                        }
-                        // 다음 사이클 시작
-                        startDotLoop(root);
-                    }, 400); // 다 보여진 후 0.8초 기다림
-                }
+    @Override
+    public void onDestroyView() {
+        try {
+            if (animationDrawable != null) {
+                animationDrawable.stop();
             }
-        }, 400);
+
+            if (imageViewLoading != null) {
+                Drawable bg = imageViewLoading.getBackground();
+                if (bg instanceof AnimationDrawable) {
+                    ((AnimationDrawable) bg).stop();
+                }
+                imageViewLoading.setBackground(null);
+            }
+        } catch (Exception e) {
+            Log.e("MessageYesNoFragment", "onDestroyView error", e);
+            logger.error("MessageYesNoFragment onDestroyView error : {}", e.getMessage());
+        }
+        super.onDestroyView();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        if (handler != null) handler.removeCallbacksAndMessages(null);
     }
-
 }

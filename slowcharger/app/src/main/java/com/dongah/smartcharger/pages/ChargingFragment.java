@@ -33,6 +33,7 @@ import com.dongah.smartcharger.websocket.ocpp.core.Reason;
 import com.dongah.smartcharger.websocket.ocpp.core.StatusNotificationRequest;
 import com.dongah.smartcharger.websocket.ocpp.core.StopTransactionRequest;
 import com.dongah.smartcharger.websocket.ocpp.utilities.ZonedDateTimeConvert;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -74,6 +75,7 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
     private String mParam2;
 
     TextView txtChargePay, txtChargeTime, txtAmountOfCharge, txtPowerUnitPrice;
+    CircularProgressIndicator progressCircular;
     Button  btnChargingStop;
     CircularFillableLoaders circularFillableLoaders;
     TextView txtSoc;
@@ -126,7 +128,6 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_charging, container, false);
         txtSoc = view.findViewById(R.id.txtSoc);
         txtPowerUnitPrice = view.findViewById(R.id.txtPowerUnitPrice);
@@ -135,6 +136,7 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
         txtAmountOfCharge = view.findViewById(R.id.txtAmountOfCharge);
         btnChargingStop = view.findViewById(R.id.btnChargingStop);
         btnChargingStop.setOnClickListener(this);
+        progressCircular = view.findViewById(R.id.progressCircular);
         return view;
     }
 
@@ -147,13 +149,13 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
 //            MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.mContext, R.raw.charging);
 //            mediaPlayer.start();
 //            onLimitPower(0);
+            progressCircular.isIndeterminate();
             try {
                 classUiProcess = ((MainActivity) MainActivity.mContext).getClassUiProcess();
                 startTime = zonedDateTimeConvert.doStringDateToDate(classUiProcess.getChargingCurrentData().getChargingStartTime());
-
                 powerUnitPrice = classUiProcess.getChargingCurrentData().getPowerUnitPrice();
-
                 txtPowerUnitPrice.setText(powerUnitPrice + " 원");
+                progressCircular.setProgress(classUiProcess.getChargingCurrentData().getSoc(), true);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -161,7 +163,6 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
         } catch (Exception e) {
             logger.error("ChargingFragment onViewCreated : {}", e.getMessage());
         }
-
     }
 
     @Override
@@ -219,6 +220,7 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
                                     txtSoc.setVisibility(View.VISIBLE);
                                     txtSoc.setText(classUiProcess.getChargingCurrentData().getSoc() + "%");
                                 }
+                                progressCircular.setProgress(classUiProcess.getChargingCurrentData().getSoc(), true);
 //
 //                                // 충전 남은 시간 : PLC 에서 지원 안함
 //                                int rHour = classUiProcess.getChargingCurrentData().getRemaintime() / 3600;
@@ -242,12 +244,15 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onDetach() {
         super.onDetach();
-        uiUpdateHandler.removeCallbacksAndMessages(null);
-        uiUpdateHandler.removeMessages(0);
-        if (uiUpdateHandler != null) uiUpdateHandler = null;
-        requestStrings[0] = "0";
-        sharedModel.setMutableLiveData(requestStrings);
-
+        try {
+            uiUpdateHandler.removeCallbacksAndMessages(null);
+            uiUpdateHandler.removeMessages(0);
+            if (uiUpdateHandler != null) uiUpdateHandler = null;
+            requestStrings[0] = "0";
+            sharedModel.setMutableLiveData(requestStrings);
+        } catch (Exception e) {
+            logger.error("ChargingFragment onDetach error : {}", e.getMessage());
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

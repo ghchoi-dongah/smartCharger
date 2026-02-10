@@ -3,29 +3,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="800dp"
-    android:layout_height="424dp"
+    android:layout_height="388dp"
     tools:context=".pages.ConfigSettingFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:id="@+id/txtChargerType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
         android:text="@string/txtChargerType"
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="30dp"
         android:textSize="18sp"
         android:textColor="@color/black"
-        android:layout_marginTop="1dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
         android:id="@+id/spinnerChargerType"
-        android:layout_width="250dp"
+        android:layout_width="290dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:dropDownWidth="300dp"
         android:spinnerMode="dropdown"
+        android:theme="@style/SpinnerTheme"
+        android:background="@drawable/spinner_background"
         app:layout_constraintLeft_toRightOf="@id/txtChargerType"
         app:layout_constraintTop_toTopOf="@id/txtChargerType" />
 
@@ -33,9 +34,9 @@
         android:id="@+id/txtModel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/txtModel"
-        android:layout_marginStart="100dp"
         android:layout_marginTop="5dp"
+        android:layout_marginStart="100dp"
+        android:text="@string/txtModel"
         android:textSize="18sp"
         android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@id/txtChargerType"
@@ -43,11 +44,13 @@
 
     <Spinner
         android:id="@+id/spinnerChargerModel"
-        android:layout_width="250dp"
+        android:layout_width="290dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:dropDownWidth="300dp"
         android:spinnerMode="dropdown"
+        android:theme="@style/SpinnerTheme"
+        android:background="@drawable/spinner_background"
         app:layout_constraintLeft_toRightOf="@id/txtModel"
         app:layout_constraintTop_toTopOf="@id/txtModel" />
 
@@ -64,15 +67,15 @@
 
     <EditText
         android:id="@+id/editChargerId"
-        android:layout_width="200dp"
+        android:layout_width="290dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text_disenable"
-        android:textColor="#000000"
         android:maxLines="1"
         android:textSize="18sp"
+        android:textColor="#000000"
         android:inputType="none"
         android:focusable="false"
         android:clickable="false"
+        android:background="@drawable/shape_edit_text_disenable"
         app:layout_constraintBottom_toBottomOf="@id/txtChargerId"
         app:layout_constraintLeft_toLeftOf="@id/spinnerChargerModel"
         tools:ignore="Autofill,LabelFor" />
@@ -101,28 +104,28 @@
 
     <EditText
         android:id="@+id/editHttpURL"
-        android:layout_width="250dp"
+        android:layout_width="290dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text_focus"
-        android:textColor="#000000"
         android:inputType="text"
         android:maxLines="1"
         android:textSize="18sp"
+        android:textColor="#000000"
         android:imeOptions="flagNoExtractUi"
+        android:background="@drawable/shape_edit_text_focus"
         app:layout_constraintBottom_toBottomOf="@id/txtHttpURL"
         app:layout_constraintLeft_toLeftOf="@id/editChargerId"
         tools:ignore="Autofill,LabelFor,TextFields" />
 
     <EditText
         android:id="@+id/editServerUrl"
-        android:layout_width="250dp"
+        android:layout_width="290dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text_focus"
-        android:textColor="#000000"
         android:inputType="text"
         android:maxLines="1"
         android:textSize="18sp"
+        android:textColor="#000000"
         android:imeOptions="flagNoExtractUi"
+        android:background="@drawable/shape_edit_text_focus"
         app:layout_constraintBottom_toBottomOf="@id/txtServerURL"
         app:layout_constraintLeft_toLeftOf="@id/editChargerId"
         tools:ignore="Autofill,LabelFor,TextFields" />
@@ -142,13 +145,13 @@
         android:id="@+id/editServerPort"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text_disenable"
-        android:textColor="#000000"
         android:maxLines="1"
         android:textSize="18sp"
+        android:textColor="#000000"
         android:inputType="none"
         android:focusable="false"
         android:clickable="false"
+        android:background="@drawable/shape_edit_text_disenable"
         app:layout_constraintBottom_toBottomOf="@id/txtServerPort"
         app:layout_constraintLeft_toLeftOf="@id/editServerUrl"
         tools:ignore="Autofill,LabelFor" />
@@ -168,12 +171,12 @@
         android:id="@+id/editControlPort"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text_focus"
-        android:textColor="#000000"
         android:inputType="text"
         android:maxLines="1"
         android:textSize="18sp"
+        android:textColor="#000000"
         android:imeOptions="flagNoExtractUi"
+        android:background="@drawable/shape_edit_text_focus"
         app:layout_constraintBottom_toBottomOf="@id/txtControlBoard"
         app:layout_constraintLeft_toLeftOf="@id/editServerPort"
         tools:ignore="Autofill,LabelFor" />
@@ -193,12 +196,12 @@
         android:id="@+id/editRfPort"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text_focus"
-        android:textColor="#000000"
         android:inputType="text"
         android:maxLines="1"
         android:textSize="18sp"
+        android:textColor="#000000"
         android:imeOptions="flagNoExtractUi"
+        android:background="@drawable/shape_edit_text_focus"
         app:layout_constraintBottom_toBottomOf="@id/txtRFCard"
         app:layout_constraintLeft_toLeftOf="@id/editControlPort"
         tools:ignore="Autofill,LabelFor" />
@@ -208,24 +211,24 @@
         android:id="@+id/txtPLC"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="10dp"
         android:text="@string/txtPLC"
         android:textSize="18sp"
         android:textColor="@color/black"
-        app:layout_constraintTop_toTopOf="@id/editRfPort"
-        app:layout_constraintLeft_toRightOf="@id/editRfPort" />
+        app:layout_constraintTop_toTopOf="@id/editServerPort"
+        app:layout_constraintLeft_toRightOf="@id/editServerPort" />
 
     <EditText
         android:id="@+id/editPlcPort"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text_focus"
         android:layout_marginStart="10dp"
-        android:textColor="#000000"
         android:inputType="text"
         android:maxLines="1"
         android:textSize="18sp"
+        android:textColor="#000000"
         android:imeOptions="flagNoExtractUi"
+        android:background="@drawable/shape_edit_text_focus"
         app:layout_constraintTop_toTopOf="@id/txtPLC"
         app:layout_constraintLeft_toRightOf="@id/txtPLC"
         tools:ignore="Autofill,LabelFor" />
@@ -241,21 +244,18 @@
         app:layout_constraintTop_toBottomOf="@id/txtRFCard"
         app:layout_constraintEnd_toEndOf="@id/txtRFCard" />
 
-
-
     <EditText
         android:id="@+id/editDuty"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text_focus"
-        android:textColor="#000000"
         android:inputType="text"
         android:maxLines="1"
         android:textSize="18sp"
+        android:textColor="#000000"
+        android:background="@drawable/shape_edit_text_focus"
         app:layout_constraintBottom_toBottomOf="@id/txtDR"
         app:layout_constraintLeft_toLeftOf="@id/editRfPort"
         tools:ignore="Autofill,LabelFor" />
-
 
     <TextView
         android:id="@+id/txtTestPrice"
@@ -265,25 +265,25 @@
         android:text="@string/txtTestPrice"
         android:textSize="18sp"
         android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/txtDR"
-        app:layout_constraintEnd_toEndOf="@id/txtDR" />
+        app:layout_constraintTop_toBottomOf="@id/txtPLC"
+        app:layout_constraintRight_toRightOf="@id/txtPLC" />
 
     <EditText
         android:id="@+id/editTestPrice"
-        android:layout_width="120dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text_focus"
         android:textColor="#000000"
         android:inputType="text"
         android:maxLines="1"
         android:textSize="18sp"
-        android:imeOptions="flagNoExtractUi"
-        app:layout_constraintBottom_toBottomOf="@id/txtTestPrice"
-        app:layout_constraintLeft_toLeftOf="@id/editDuty"
-        android:textColorHint="#ffc0c0c0"
         android:hint="테스트 단가"
+        android:textColorHint="#ffc0c0c0"
+        android:imeOptions="flagNoExtractUi"
+        android:background="@drawable/shape_edit_text_focus"
+        app:layout_constraintTop_toTopOf="@id/txtTestPrice"
+        app:layout_constraintBottom_toBottomOf="@id/txtTestPrice"
+        app:layout_constraintLeft_toLeftOf="@id/editPlcPort"
         tools:ignore="Autofill,HardcodedText" />
-
 
     <TextView
         android:layout_width="wrap_content"
@@ -294,122 +294,55 @@
         app:layout_constraintLeft_toRightOf="@id/editDuty"
         app:layout_constraintBottom_toBottomOf="@id/editDuty"/>
 
-    <RadioGroup
-        android:id="@+id/radioGrpPayment"
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTestPrice">
-
-        <TextView
-            android:id="@+id/headerPayment"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:textColor="@color/teal_200"
-            android:text="@string/headerPayment"
-            android:textSize="18sp" />
-
-        <RadioButton
-            android:id="@+id/rbMemberCredit"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:checked="false"
-            android:textColor="@color/black"
-            android:layout_marginStart="5dp"
-            android:tag="0"
-            android:text="@string/rbMemberCredit"
-            android:textSize="14sp" />
-
-        <RadioButton
-            android:id="@+id/rbMember"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:checked="false"
-            android:textColor="@color/black"
-            android:layout_marginStart="5dp"
-            android:tag="1"
-            android:text="@string/rbMember"
-            android:textSize="14sp" />
-
-        <RadioButton
-            android:id="@+id/rbCredit"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:checked="false"
-            android:textColor="@color/black"
-            android:layout_marginStart="5dp"
-            android:tag="2"
-            android:text="@string/rbCredit"
-            android:textSize="14sp" />
-    </RadioGroup>
-
-    <RadioGroup
-        android:id="@+id/radioGrpModeSelect"
-        android:orientation="horizontal"
+    <TextView
+        android:id="@+id/txtPayment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        app:layout_constraintLeft_toLeftOf="@id/radioGrpPayment"
-        app:layout_constraintTop_toBottomOf="@id/radioGrpPayment">
+        android:text="@string/payMode"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/txtDR"
+        app:layout_constraintEnd_toEndOf="@id/txtDR" />
 
-        <TextView
-            android:id="@+id/headerMode"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:textColor="@color/teal_200"
-            android:text="@string/headerMode"
-            android:textSize="18sp" />
+    <Spinner
+        android:id="@+id/spinnerPayment"
+        android:layout_width="290dp"
+        android:layout_height="wrap_content"
+        android:dropDownWidth="300dp"
+        android:spinnerMode="dropdown"
+        android:theme="@style/SpinnerTheme"
+        android:background="@drawable/spinner_background"
+        app:layout_constraintLeft_toLeftOf="@id/editDuty"
+        app:layout_constraintTop_toTopOf="@id/txtPayment" />
 
-        <RadioButton
-            android:id="@+id/rbServerMode"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:textSize="14sp"
-            android:checked="false"
-            android:textColor="@color/black"
-            android:text="@string/rbServerMode"
-            android:tag="0" />
+    <TextView
+        android:id="@+id/txtMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="@string/mode"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/txtPayment"
+        app:layout_constraintEnd_toEndOf="@id/txtPayment" />
 
-        <RadioButton
-            android:id="@+id/rbAutoMode"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:textSize="14sp"
-            android:checked="false"
-            android:textColor="@color/black"
-            android:text="@string/rbAutoMode"
-            android:tag="2" />
-
-        <RadioButton
-            android:id="@+id/rbTestMode"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:textSize="14sp"
-            android:checked="false"
-            android:textColor="@color/black"
-            android:text="@string/rbTestMode"
-            android:tag="3" />
-
-        <RadioButton
-            android:id="@+id/rbPowerMeterMode"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:textSize="14sp"
-            android:checked="false"
-            android:textColor="@color/black"
-            android:text="@string/rbPowerMeterMode"
-            android:tag="4" />
-    </RadioGroup>
-
+    <Spinner
+        android:id="@+id/spinnerMode"
+        android:layout_width="290dp"
+        android:layout_height="wrap_content"
+        android:dropDownWidth="300dp"
+        android:spinnerMode="dropdown"
+        android:theme="@style/SpinnerTheme"
+        android:background="@drawable/spinner_background"
+        app:layout_constraintLeft_toLeftOf="@id/spinnerPayment"
+        app:layout_constraintTop_toTopOf="@id/txtMode" />
 
     <TextView
         android:id="@+id/txtVendorCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
+        android:layout_marginStart="60dp"
         android:text="@string/txtVendorCode"
         android:textSize="18sp"
         android:textColor="@color/black"
@@ -420,13 +353,13 @@
         android:id="@+id/editVendorCode"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text_focus"
-        android:textColor="#000000"
+        android:layout_marginStart="10dp"
         android:inputType="text"
         android:maxLines="1"
         android:textSize="18sp"
+        android:textColor="#000000"
         android:imeOptions="flagNoExtractUi"
-        android:layout_marginStart="10dp"
+        android:background="@drawable/shape_edit_text_focus"
         app:layout_constraintTop_toTopOf="@id/txtVendorCode"
         app:layout_constraintLeft_toRightOf="@id/txtVendorCode"
         tools:ignore="Autofill" />
@@ -446,12 +379,12 @@
         android:id="@+id/editMid"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text_focus"
-        android:textColor="#000000"
         android:inputType="text"
         android:maxLines="1"
         android:textSize="18sp"
+        android:textColor="#000000"
         android:imeOptions="flagNoExtractUi"
+        android:background="@drawable/shape_edit_text_focus"
         app:layout_constraintBottom_toBottomOf="@id/txtMID"
         app:layout_constraintLeft_toLeftOf="@id/editVendorCode"
         tools:ignore="Autofill" />
@@ -466,16 +399,17 @@
         android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@id/txtMID"
         app:layout_constraintEnd_toEndOf="@id/txtMID" />
+
     <EditText
         android:id="@+id/editSerial"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text_focus"
-        android:textColor="#000000"
         android:inputType="text"
         android:maxLines="1"
         android:textSize="18sp"
+        android:textColor="#000000"
         android:imeOptions="flagNoExtractUi"
+        android:background="@drawable/shape_edit_text_focus"
         app:layout_constraintBottom_toBottomOf="@id/txtSerial"
         app:layout_constraintLeft_toLeftOf="@id/editMid"
         tools:ignore="Autofill" />
@@ -495,16 +429,15 @@
         android:id="@+id/editFirmware"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text"
-        android:textColor="#000000"
         android:inputType="text"
         android:maxLines="1"
         android:textSize="18sp"
+        android:textColor="#000000"
         android:imeOptions="flagNoExtractUi"
+        android:background="@drawable/shape_edit_text"
         app:layout_constraintBottom_toBottomOf="@id/txtFirmware"
         app:layout_constraintLeft_toLeftOf="@id/editSerial"
         tools:ignore="Autofill" />
-
 
     <Button
         android:id="@+id/btnKeyBoard"
@@ -512,9 +445,10 @@
         android:layout_height="50dp"
         android:layout_marginStart="5dp"
         android:text="@string/btnKeyBoard"
-        app:backgroundTint="@null"
         android:textSize="18sp"
-        android:background="@drawable/selector_blue_btn"
+        android:textColor="@color/primary"
+        android:background="@drawable/selector_default_btn"
+        app:backgroundTint="@null"
         app:layout_constraintTop_toTopOf="@id/editFirmware"
         app:layout_constraintLeft_toRightOf="@id/editFirmware" />
 
@@ -533,17 +467,15 @@
         android:id="@+id/editImsi"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text"
-        android:textColor="#000000"
         android:inputType="text"
         android:maxLines="1"
         android:textSize="18sp"
+        android:textColor="#000000"
         android:imeOptions="flagNoExtractUi"
+        android:background="@drawable/shape_edit_text"
         app:layout_constraintBottom_toBottomOf="@id/txtImsi"
         app:layout_constraintLeft_toLeftOf="@id/editFirmware"
         tools:ignore="Autofill" />
-
-
 
     <TextView
         android:id="@+id/txtM2mTel"
@@ -556,17 +488,16 @@
         app:layout_constraintTop_toBottomOf="@id/txtImsi"
         app:layout_constraintEnd_toEndOf="@id/txtImsi" />
 
-
     <EditText
         android:id="@+id/editM2mTel"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text_focus"
-        android:textColor="#000000"
         android:inputType="text"
         android:maxLines="1"
         android:textSize="18sp"
+        android:textColor="#000000"
         android:imeOptions="flagNoExtractUi"
+        android:background="@drawable/shape_edit_text_focus"
         app:layout_constraintBottom_toBottomOf="@id/txtM2mTel"
         app:layout_constraintLeft_toLeftOf="@id/editImsi"
         tools:ignore="Autofill" />
@@ -584,40 +515,38 @@
 
     <EditText
         android:id="@+id/editTargetChargingTime"
-        android:layout_width="60dp"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text_focus"
-        android:textColor="#000000"
+        android:gravity="right"
         android:inputType="text"
         android:maxLines="1"
         android:textSize="18sp"
-        android:gravity="right"
+        android:textColor="#000000"
         android:imeOptions="flagNoExtractUi"
+        android:background="@drawable/shape_edit_text_focus"
         app:layout_constraintBottom_toBottomOf="@id/txtTargetChargingTime"
         app:layout_constraintLeft_toLeftOf="@id/editImsi"
         tools:ignore="Autofill,RtlHardcoded" />
-
 
     <CheckBox
         android:id="@+id/chkStopConfirm"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:checked="false"
         android:layout_marginTop="5dp"
+        android:checked="false"
         android:text="@string/txtStopConfirm"
-        app:layout_constraintTop_toBottomOf="@id/txtSoc"
+        app:layout_constraintTop_toBottomOf="@id/txtTargetChargingTime"
         app:layout_constraintLeft_toLeftOf="@id/txtTargetChargingTime" />
 
     <CheckBox
         android:id="@+id/chkSigned"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:checked="true"
         android:layout_marginStart="40dp"
+        android:checked="true"
         android:text="@string/txtSigned"
         app:layout_constraintTop_toTopOf="@id/chkStopConfirm"
         app:layout_constraintLeft_toRightOf="@id/chkStopConfirm" />
-
 
     <TextView
         android:id="@+id/txtSoc"
@@ -627,46 +556,48 @@
         android:text="@string/txtSoc"
         android:textSize="18sp"
         android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/txtTargetChargingTime"
-        app:layout_constraintEnd_toEndOf="@id/txtTargetChargingTime" />
+        app:layout_constraintTop_toBottomOf="@id/txtTestPrice"
+        app:layout_constraintRight_toRightOf="@id/txtTestPrice" />
 
     <EditText
         android:id="@+id/editSoc"
-        android:layout_width="60dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_edit_text_focus"
-        android:textColor="#000000"
+        android:gravity="right"
         android:inputType="text"
         android:maxLines="1"
         android:textSize="18sp"
-        android:gravity="right"
+        android:textColor="#000000"
         android:imeOptions="flagNoExtractUi"
+        android:background="@drawable/shape_edit_text_focus"
+        app:layout_constraintTop_toTopOf="@id/txtSoc"
         app:layout_constraintBottom_toBottomOf="@id/txtSoc"
-        app:layout_constraintLeft_toLeftOf="@id/editTargetChargingTime"
+        app:layout_constraintLeft_toLeftOf="@id/editPlcPort"
         tools:ignore="Autofill,RtlHardcoded" />
+
     <Button
         android:id="@+id/btnConfigSave"
         android:layout_width="100dp"
         android:layout_height="80dp"
-        android:background="@drawable/selector_admin_btn"
+        android:layout_marginBottom="40dp"
+        android:layout_marginStart="30dp"
         android:text="@string/btnConfigSave"
         android:textSize="24sp"
+        android:background="@drawable/shape_btn_blue"
         app:backgroundTint="@null"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="80dp"
         app:layout_constraintLeft_toLeftOf="@id/txtTargetChargingTime"
-        app:layout_constraintTop_toBottomOf="@id/txtTargetChargingTime" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <Button
         android:id="@+id/btnConfigExit"
         android:layout_width="100dp"
         android:layout_height="80dp"
-        android:text="@string/btnConfigExit"
-        android:textColor="@color/black"
-        app:backgroundTint="@null"
-        android:textSize="24sp"
-        android:background="@drawable/selector_option_btn"
         android:layout_marginStart="10dp"
+        android:text="@string/btnConfigExit"
+        android:textSize="24sp"
+        android:textColor="@color/primary"
+        android:background="@drawable/selector_default_btn"
+        app:backgroundTint="@null"
         app:layout_constraintTop_toTopOf="@id/btnConfigSave"
         app:layout_constraintLeft_toRightOf="@id/btnConfigSave" />
 
@@ -674,14 +605,13 @@
         android:id="@+id/btnPowerOff"
         android:layout_width="100dp"
         android:layout_height="80dp"
-        android:text="@string/btnPowerOff"
-        android:textColor="@color/white"
-        app:backgroundTint="@null"
-        android:textSize="18sp"
-        android:background="@drawable/selector_stop_btn"
         android:layout_marginStart="10dp"
+        android:text="@string/btnPowerOff"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:background="@drawable/shape_btn_red"
+        app:backgroundTint="@null"
         app:layout_constraintTop_toTopOf="@id/btnConfigExit"
         app:layout_constraintLeft_toRightOf="@id/btnConfigExit" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout >

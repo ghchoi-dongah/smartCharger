@@ -1,6 +1,8 @@
 package com.dongah.smartcharger.basefunction;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import androidx.fragment.app.FragmentTransaction;
 
@@ -41,6 +43,7 @@ public class FragmentChange {
         Bundle bundle = new Bundle();
         ((MainActivity) MainActivity.mContext).setFragmentSeq(uiSeq);
         FragmentTransaction transaction = ((MainActivity) MainActivity.mContext).getSupportFragmentManager().beginTransaction();
+        onAdminLayoutChange(uiSeq);
         switch (uiSeq) {
             case INIT:
                 try {
@@ -237,6 +240,30 @@ public class FragmentChange {
                     logger.error("onFragmentChange error : REBOOTING {}", e.getMessage());
                 }
                 break;
+        }
+    }
+
+    public void onAdminLayoutChange(UiSeq uiSeq) {
+        try {
+            FrameLayout frameHeader = ((MainActivity) MainActivity.mContext).findViewById(R.id.frameTop);
+            FrameLayout frameFooter = ((MainActivity) MainActivity.mContext).findViewById(R.id.frameFooter);
+
+            switch (uiSeq) {
+                case ADMIN_PASS:
+                case ENVIRONMENT:
+                case CONFIG_SETTING:
+                case WEB_SOCKET:
+                case CONTROL_BOARD_DEBUGGING:
+                    frameHeader.setVisibility(View.INVISIBLE);
+                    frameFooter.setVisibility(View.INVISIBLE);
+                    break;
+                default:
+                    frameHeader.setVisibility(View.VISIBLE);
+                    frameFooter.setVisibility(View.VISIBLE);
+                    break;
+            }
+        } catch (Exception e) {
+            logger.error("onAdminLayoutChange error : {}", e.getMessage());
         }
     }
 }

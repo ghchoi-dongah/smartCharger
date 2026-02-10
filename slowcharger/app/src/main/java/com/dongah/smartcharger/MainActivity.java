@@ -60,6 +60,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,9 +73,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     public static Context mContext;
 
-
-    TextView txtVersion, txtFwVersion;
-    TextView textViewChargerId, textViewTime;
+    TextView textViewTime, textViewVersionValue;
     Handler handler = new Handler();
     Runnable runnable;
     ImageView imgNetwork;
@@ -172,14 +171,10 @@ public class MainActivity extends AppCompatActivity {
         fragmentCurrent = new FragmentCurrent();
 
         imgNetwork = findViewById(R.id.imgNetwork);
-
-        txtVersion = findViewById(R.id.txtVersion);
-        txtVersion.setText("Ver : " + GlobalVariables.VERSION);
-        txtFwVersion = findViewById(R.id.txtFwVersion);
-        txtFwVersion.setText("FW Ver : " + GlobalVariables.FW_VERSION);
-
         textViewTime = findViewById(R.id.textViewTime);
-        textViewChargerId = findViewById(R.id.textViewChargerId);
+        textViewVersionValue = findViewById(R.id.textViewVersionValue);
+        textViewVersionValue.setText("VER-" + GlobalVariables.VERSION + " | ");
+
 
         //   ConfigurationKey read */
         configurationKeyRead = new ConfigurationKeyRead();
@@ -343,7 +338,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateTime() {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
             String currentTime = sdf.format(new Date());
             textViewTime.setText(currentTime);
         } catch (Exception e){
@@ -468,7 +464,8 @@ public class MainActivity extends AppCompatActivity {
                                 ConnectionListJsonParse connectionListJsonParse = new ConnectionListJsonParse();
                                 connectorList = connectionListJsonParse.parseConnectorList(response);
 
-                                runOnUiThread(() -> textViewChargerId.setText("ID: " + connectorList.get(0).getSearchKey()));
+//                                runOnUiThread(() -> textViewChargerId.setText("ID: " + connectorList.get(0).getSearchKey()));
+                                runOnUiThread(() -> chargerConfiguration.setChargerId(String.valueOf(connectorList.get(0).getSearchKey())));
 
                                 String baseUrl = chargerConfiguration.getServerConnectingString() + "/" + GlobalVariables.getHumaxClientId();
                                 socketReceiveMessage = new SocketReceiveMessage(baseUrl);

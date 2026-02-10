@@ -5,10 +5,63 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/initLayout"
     android:layout_width="800dp"
-    android:layout_height="424dp"
+    android:layout_height="388dp"
     tools:context=".pages.InitFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <View
+        android:id="@+id/viewCircle"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+        android:background="@drawable/layer_list_oval_blue"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageViewCar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="90dp"
+        android:background="@drawable/car_blue"
+        app:layout_constraintTop_toTopOf="@id/viewCircle"
+        app:layout_constraintStart_toStartOf="@id/viewCircle"
+        app:layout_constraintEnd_toEndOf="@id/viewCircle"
+        tools:ignore="contentDescription" />
+
+    <TextView
+        android:id="@+id/textViewStartMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/startMessage"
+        android:textSize="32sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/imageViewCar"
+        app:layout_constraintStart_toStartOf="@id/imageViewCar"
+        app:layout_constraintEnd_toEndOf="@id/imageViewCar" />
+
+    <TextView
+        android:id="@+id/textViewInitMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/initMessage"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/textViewStartMessage"
+        app:layout_constraintStart_toStartOf="@id/textViewStartMessage"
+        app:layout_constraintEnd_toEndOf="@id/textViewStartMessage" />
+
+    <TextView
+        android:id="@+id/textViewMemberUnitInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/memChargingUnit"
+        android:textSize="17sp"
+        app:layout_constraintStart_toStartOf="@id/textViewInitMessage"
+        app:layout_constraintTop_toBottomOf="@id/textViewInitMessage"
+        app:layout_constraintEnd_toEndOf="@id/textViewInitMessage"/>
 
     <ImageView
         android:id="@+id/btnQr"
@@ -20,59 +73,5 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:ignore="ContentDescription" />
-
-    <TextView
-        android:id="@+id/textViewMemberUnitInput"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/memChargingUnit"
-        android:textSize="22sp"
-        android:layout_marginStart="-60dp"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintLeft_toLeftOf="@id/btnQr"
-        app:layout_constraintBottom_toTopOf="@id/btnQr"/>
-
-    <TextView
-        android:id="@+id/txtInitMessage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:gravity="center"
-        android:text="@string/initMessage"
-        android:textSize="36sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <ImageView
-        android:id="@+id/imgDot"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="9dp"
-        android:background="@drawable/dot_circle"
-        android:importantForAccessibility="no"
-        app:layout_constraintTop_toTopOf="@id/imageViewClick"
-        app:layout_constraintStart_toStartOf="@id/imageViewClick"
-        app:layout_constraintEnd_toEndOf="@id/imageViewClick"/>
-
-
-    <ImageView
-        android:id="@+id/imageViewClick"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/click"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:textSize="48sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtInitMessage"
-        app:layout_constraintVertical_bias="0.15"
-        tools:ignore="contentDescription" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

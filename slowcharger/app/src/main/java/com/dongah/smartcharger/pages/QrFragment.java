@@ -79,7 +79,6 @@ public class QrFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_qr, container, false);
         imgQrCode = view.findViewById(R.id.imgQrCode);
         return view;
@@ -98,7 +97,7 @@ public class QrFragment extends Fragment {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.encodeBitmap("/" + chargerConfiguration.getChargerId()
                             + "/" + chargingCurrentData.getConnectorId(),
-                    BarcodeFormat.QR_CODE, 600, 600);
+                    BarcodeFormat.QR_CODE, 400, 400);
             imgQrCode.setImageBitmap(bitmap);
 
             uiCheckHandler = new Handler();
@@ -118,10 +117,19 @@ public class QrFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        // header title message change
-        SharedModel sharedModel = new ViewModelProvider(requireActivity()).get(SharedModel.class);
-        String[] requestStrings = new String[1];
-        requestStrings[0] = "0";
-        sharedModel.setMutableLiveData(requestStrings);
+        try {
+            // header title message change
+            SharedModel sharedModel = new ViewModelProvider(requireActivity()).get(SharedModel.class);
+            String[] requestStrings = new String[1];
+            requestStrings[0] = "0";
+            sharedModel.setMutableLiveData(requestStrings);
+
+          if (uiCheckHandler != null) {
+              uiCheckHandler.removeCallbacksAndMessages(null);
+              uiCheckHandler.removeMessages(0);
+          }
+        } catch (Exception e) {
+            logger.error("QrFragment onDetach : {}", e.getMessage());
+        }
     }
 }

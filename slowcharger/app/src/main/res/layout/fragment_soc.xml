@@ -4,18 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/initLayout"
     android:layout_width="800dp"
-    android:layout_height="424dp"
+    android:layout_height="388dp"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     tools:context=".pages.SocFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:id="@+id/txtSocMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/socMessage"
-        android:textSize="36sp"
-        android:gravity="center_horizontal"
         android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:text="@string/socMessage"
+        android:textSize="34sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,36 +24,25 @@
         android:id="@+id/txtSocInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="240dp"
+        android:layout_marginTop="20dp"
         android:gravity="end|center"
         android:text="100%"
-        android:textSize="56sp"
+        android:textSize="68sp"
         android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="@id/txtSocMessage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtSocMessage"/>
-
-    <TextView
-        android:id="@+id/txtSocGuide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="@string/socGuideMessage"
-        android:textSize="19sp"
-        app:layout_constraintLeft_toRightOf="@id/txtSocInput"
-        app:layout_constraintBottom_toBottomOf="@id/txtSocInput"/>
-
 
     <SeekBar
         android:id="@+id/seekBar"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
         android:layout_width="600dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:minHeight="0dp"
         android:maxHeight="50dp"
         android:max="5"
-        android:progress="3"
+        android:progress="1"
         android:progressDrawable="@drawable/seekbar_style"
         android:thumb="@drawable/seekbar_custom_thumb"
         android:splitTrack="false"
@@ -60,30 +50,59 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
-    <ImageButton
+    <Button
         android:id="@+id/imgMinus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="22dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/circle_minus"
-        android:layout_marginVertical="10dp"
-        app:layout_constraintLeft_toLeftOf="@id/seekBar"
-        app:layout_constraintBottom_toTopOf="@id/seekBar"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginEnd ="22dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:background="@drawable/shape_oval_blue"
+        app:backgroundTint="@null"
+        app:layout_constraintTop_toTopOf="@id/seekBar"
+        app:layout_constraintBottom_toBottomOf="@id/seekBar"
+        app:layout_constraintEnd_toStartOf="@id/seekBar"
         tools:ignore="SpeakableTextPresentCheck, contentDescription" />
 
-    <ImageButton
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:text="-"
+        android:textSize="32sp"
+        android:textColor="@color/primary"
+        app:layout_constraintStart_toStartOf="@id/imgMinus"
+        app:layout_constraintEnd_toEndOf="@id/imgMinus"
+        app:layout_constraintBottom_toBottomOf="@id/imgMinus"
+        app:layout_constraintTop_toTopOf="@id/imgMinus" />
+
+    <Button
         android:id="@+id/imgPlus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
         android:layout_marginStart="22dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/circle_plus"
-        android:layout_marginVertical="10dp"
-        app:layout_constraintRight_toRightOf="@id/seekBar"
-        app:layout_constraintBottom_toTopOf="@id/seekBar"
+        android:gravity="center"
+        android:text="+"
+        android:textSize="16sp"
+        android:textColor="@color/primary"
+        android:includeFontPadding="false"
+        android:background="@drawable/shape_oval_blue"
+        app:backgroundTint="@null"
+        app:layout_constraintTop_toTopOf="@id/seekBar"
+        app:layout_constraintBottom_toBottomOf="@id/seekBar"
+        app:layout_constraintStart_toEndOf="@id/seekBar"
         tools:ignore="SpeakableTextPresentCheck, contentDescription" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+"
+        android:textSize="26sp"
+        android:textColor="@color/primary"
+        app:layout_constraintStart_toStartOf="@id/imgPlus"
+        app:layout_constraintEnd_toEndOf="@id/imgPlus"
+        app:layout_constraintBottom_toBottomOf="@id/imgPlus"
+        app:layout_constraintTop_toTopOf="@id/imgPlus" />
 
     <TextView
         android:id="@+id/txtSocStart"
@@ -97,16 +116,48 @@
         app:layout_constraintTop_toBottomOf="@id/seekBar"/>
 
     <TextView
-        android:id="@+id/txtSocMiddle"
+        android:id="@+id/txtSoc60"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="80%"
+        android:text="60%"
         android:textSize="20sp"
-        android:layout_marginStart="350dp"
+        android:layout_marginStart="116dp"
         android:layout_marginTop="5dp"
         app:layout_constraintLeft_toLeftOf="@id/seekBar"
         app:layout_constraintTop_toBottomOf="@id/seekBar"/>
 
+    <TextView
+        android:id="@+id/txtSoc70"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="70%"
+        android:textSize="20sp"
+        android:layout_marginStart="230dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintLeft_toLeftOf="@id/seekBar"
+        app:layout_constraintTop_toBottomOf="@id/seekBar"/>
+
+    <TextView
+        android:id="@+id/txtSoc80"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="80%"
+        android:textSize="20sp"
+        android:layout_marginStart="345dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintLeft_toLeftOf="@id/seekBar"
+        app:layout_constraintTop_toBottomOf="@id/seekBar"/>
+
+    <TextView
+        android:id="@+id/txtSoc90"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="90%"
+        android:textSize="20sp"
+        android:layout_marginStart="458dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintLeft_toLeftOf="@id/seekBar"
+        app:layout_constraintTop_toBottomOf="@id/seekBar"/>
 
     <TextView
         android:id="@+id/txtSocEnd"
@@ -122,16 +173,15 @@
     <Button
         android:id="@+id/btnConfirm"
         android:layout_width="300dp"
-        android:layout_height="100dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="60dp"
         android:text="@string/btn_confirm"
-        app:backgroundTint="@null"
-        android:layout_marginTop="40dp"
-        android:textSize="40sp"
+        android:textSize="34sp"
         android:textColor="@color/white"
-        android:background="@drawable/rounded_blue_button"
+        android:background="@drawable/shape_btn_blue"
+        app:backgroundTint="@null"
         app:layout_constraintTop_toBottomOf="@id/seekBar"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

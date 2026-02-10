@@ -23,7 +23,7 @@ bouncycastle = "1.70"
 circulrprogress = "1.4.0"
 commonsnet = "3.9.0"
 cardview="1.0.0"
-
+avloading = "2.3.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -47,6 +47,7 @@ circulrprogress = { module="com.mikhaellopez:circularfillableloaders", version.r
 bouncycastle = {group = "org.bouncycastle", name = "bcprov-jdk15on", version.ref = "bouncycastle"}
 commonsnet = {module="commons-net:commons-net", version.ref="commonsnet"}
 cardview = {module="androidx.cardview:cardview", version.ref="cardview"}
+avloading = { module = "io.github.maitrungduc1410:AVLoadingIndicatorView", version.ref = "avloading" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

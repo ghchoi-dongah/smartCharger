@@ -31,4 +31,8 @@
     <color name="btnCancel">#EACEB4</color>
     <color name="btnCheck">#E1F6F4</color>
     <color name="btnClick">#EEEEEE</color>
+
+    <color name="primary">#06377B</color>
+    <color name="black_500">#FF353535</color>
+    <color name="black_800">#FF0F0F0F</color>
 </resources>

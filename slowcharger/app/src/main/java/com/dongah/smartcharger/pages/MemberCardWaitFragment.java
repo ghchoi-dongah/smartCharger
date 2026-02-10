@@ -1,14 +1,14 @@
 package com.dongah.smartcharger.pages;
 
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -55,14 +55,10 @@ public class MemberCardWaitFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    LinearLayout loadingContainer;
-    final String[] colors = { "#b4c7e7", "#8fa3c6", "#6a8ea6", "#455c85", "#203864" };
-    final int[] dotIds = { R.id.dot1, R.id.dot2, R.id.dot3, R.id.dot4, R.id.dot5 };
-    Handler handler;
-    int currentStep = 0;
 
     int cnt = 0;
-
+    ImageView imageViewLoading;
+    AnimationDrawable animationDrawable;
     ClassUiProcess classUiProcess;
     ChargingCurrentData chargingCurrentData;
     ChargerConfiguration chargerConfiguration;
@@ -105,11 +101,10 @@ public class MemberCardWaitFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_member_card_wait, container, false);
-        loadingContainer = view.findViewById(R.id.loadingContainer);
-        handler = new Handler(Looper.getMainLooper());
-        startDotLoop(view);
+        imageViewLoading = view.findViewById(R.id.imageViewLoading);
+        imageViewLoading.setBackgroundResource(R.drawable.ani_loading);
+        animationDrawable = (AnimationDrawable) imageViewLoading.getBackground();
         return view;
     }
 
@@ -120,7 +115,7 @@ public class MemberCardWaitFragment extends Fragment {
 //            MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.mContext, R.raw.membercardwait);
 //            mediaPlayer.start();
 
-
+            animationDrawable.start();
             chargerConfiguration = ((MainActivity) MainActivity.mContext).getChargerConfiguration();
             classUiProcess = ((MainActivity) MainActivity.mContext).getClassUiProcess();
             chargingCurrentData = classUiProcess.getChargingCurrentData();
@@ -142,7 +137,6 @@ public class MemberCardWaitFragment extends Fragment {
                             //authorize result check
                             if (!((MainActivity) MainActivity.mContext).getClassUiProcess().getChargingCurrentData().isAuthorizeResult()) {
 //                                textView.setText(getResources().getText(R.string.txtMemberFail));
-                                if (handler != null) handler.removeCallbacksAndMessages(null);
                             }
                         }
                     };
@@ -323,46 +317,42 @@ public class MemberCardWaitFragment extends Fragment {
         }
     }
 
-
-    private void startDotLoop(View root) {
-        currentStep = 0;
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (currentStep < dotIds.length) {
-                    View dot = root.findViewById(dotIds[currentStep]);
-                    GradientDrawable drawable = new GradientDrawable();
-                    drawable.setShape(GradientDrawable.OVAL);
-                    drawable.setColor(Color.parseColor(colors[currentStep]));
-                    dot.setBackground(drawable);
-                    dot.setVisibility(View.VISIBLE);
-                    currentStep++;
-                    handler.postDelayed(this, 100);
-                } else {
-                    handler.postDelayed(() -> {
-                        for (int id : dotIds) {
-                            View dot = root.findViewById(id);
-                            dot.setVisibility(View.INVISIBLE);
-                        }
-                        // 다음 사이클 시작
-                        startDotLoop(root);
-                    }, 100); // 다 보여진 후 0.8초 기다림
-                }
+    @Override
+    public void onDestroyView() {
+        try {
+            if (animationDrawable != null) {
+                animationDrawable.stop();
             }
-        }, 100);
-    }
 
+            if (imageViewLoading != null) {
+                Drawable bg = imageViewLoading.getBackground();
+                if (bg instanceof AnimationDrawable) {
+                    ((AnimationDrawable) bg).stop();
+                }
+                imageViewLoading.setBackground(null);
+            }
+
+            if (countHandler != null) {
+                countHandler.removeCallbacksAndMessages(null);
+                countHandler = null;
+            }
+            countRunnable = null;
+
+        } catch (Exception e) {
+            Log.e("MemberCardWaitFragment", "onDestroyView error", e);
+            logger.error("MemberCardWaitFragment onDestroyView error : {}", e.getMessage());
+        }
+        super.onDestroyView();
+    }
 
     @Override
     public void onDetach() {
         super.onDetach();
         try {
             if (countHandler != null) {
-                countHandler.removeCallbacks(countRunnable);
                 countHandler.removeCallbacksAndMessages(null);
-                countHandler.removeMessages(0);
+                countHandler = null;
             }
-            if (handler != null) handler.removeCallbacksAndMessages(null);
         } catch (Exception e) {
             logger.error("MemberCardWaitFragment onDetach : {} ", e.getMessage());
         }

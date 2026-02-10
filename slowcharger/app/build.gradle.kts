@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.bouncycastle)
     implementation(libs.commonsnet)
     implementation(libs.cardview)
+    implementation(libs.avloading)
 
     implementation(libs.appcompat)
     implementation(libs.material)

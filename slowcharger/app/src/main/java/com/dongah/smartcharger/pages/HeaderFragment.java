@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.dongah.smartcharger.MainActivity;
 import com.dongah.smartcharger.R;
+import com.dongah.smartcharger.basefunction.ChargerConfiguration;
 import com.dongah.smartcharger.basefunction.UiSeq;
 import com.dongah.smartcharger.utils.SharedModel;
 
@@ -43,6 +45,8 @@ public class HeaderFragment extends Fragment implements View.OnClickListener {
 
     int clickedCnt = 0;
     ImageButton btnHome, btnLogo;
+    TextView textViewChargerId;
+    ChargerConfiguration chargerConfiguration;
     SharedModel sharedModel;
     View view;
 
@@ -77,15 +81,15 @@ public class HeaderFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_header, container, false);
 
         btnHome = view.findViewById(R.id.btnHome);
         btnHome.setOnClickListener(this);
+
         btnLogo = view.findViewById(R.id.btnLogo);
         btnLogo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,7 +105,6 @@ public class HeaderFragment extends Fragment implements View.OnClickListener {
                                     ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.ADMIN_PASS,"ADMIN_PASS",null);
                                 }
                             });
-
                         }
                         clickedCnt = 0;
                     } catch (Exception e) {
@@ -111,6 +114,9 @@ public class HeaderFragment extends Fragment implements View.OnClickListener {
                 clickedCnt++;
             }
         });
+        textViewChargerId = view.findViewById(R.id.textViewChargerId);
+        chargerConfiguration = ((MainActivity) MainActivity.mContext).getChargerConfiguration();
+        textViewChargerId.setText("ID-" + chargerConfiguration.getChargerId());
         return view;
     }
 
@@ -124,7 +130,6 @@ public class HeaderFragment extends Fragment implements View.OnClickListener {
                 public void onChanged(String[] strings) {
                     UiSeq uiSeq = ((MainActivity) MainActivity.mContext).getClassUiProcess().getUiSeq();
                     switch (uiSeq) {
-                        case INIT:
                         case MEMBER_CARD:
                         case MEMBER_CARD_WAIT:
                         case CREDIT_CARD_WAIT:

@@ -1,12 +1,17 @@
 package com.dongah.smartcharger.pages;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,13 +23,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.dongah.smartcharger.MainActivity;
 import com.dongah.smartcharger.R;
+import com.dongah.smartcharger.basefunction.ChargerConfiguration;
 import com.dongah.smartcharger.basefunction.ChargingCurrentData;
 import com.dongah.smartcharger.basefunction.GlobalVariables;
 import com.dongah.smartcharger.basefunction.PaymentType;
 import com.dongah.smartcharger.basefunction.UiSeq;
 import com.dongah.smartcharger.utils.SharedModel;
 import com.dongah.smartcharger.websocket.ocpp.utilities.ZonedDateTimeConvert;
+import com.dongah.smartcharger.websocket.socket.Connector;
 import com.dongah.smartcharger.websocket.socket.SocketReceiveMessage;
+import com.google.zxing.BarcodeFormat;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -61,10 +70,10 @@ public class AuthSelectFragment extends Fragment implements View.OnClickListener
     private String mParam1;
     private String mParam2;
 
-    FrameLayout frameMember, frameNoMember;
-    ImageView imageViewMemberCheck, imageViewNoMemberCheck;
-
+    View viewMember, viewNoMember, viewQr;
     TextView textViewMemberUnitInput, textViewNoMemberUnitInput;
+    ImageView imageViewQr;
+    ChargerConfiguration chargerConfiguration;
     ChargingCurrentData chargingCurrentData;
     Handler uiCheckHandler;
     SocketReceiveMessage socketReceiveMessage;
@@ -105,31 +114,42 @@ public class AuthSelectFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_auth_select, container, false);
+        chargerConfiguration = ((MainActivity) MainActivity.mContext).getChargerConfiguration();
         chargingCurrentData = ((MainActivity) MainActivity.mContext).getClassUiProcess().getChargingCurrentData();
         socketReceiveMessage = ((MainActivity) MainActivity.mContext).getSocketReceiveMessage();
         textViewMemberUnitInput = view.findViewById(R.id.textViewMemberUnitInput);
         textViewNoMemberUnitInput = view.findViewById(R.id.textViewNoMemberUnitInput);
-        imageViewMemberCheck = view.findViewById(R.id.imageViewMemberCheck);
-        imageViewNoMemberCheck = view.findViewById(R.id.imageViewNoMemberCheck);
 
+        viewMember = view.findViewById(R.id.viewMember);
+        viewMember.setOnClickListener(this);
+        viewNoMember = view.findViewById(R.id.viewNoMember);
+        viewNoMember.setOnClickListener(this);
+        viewQr = view.findViewById(R.id.viewQr);
+        viewQr.setOnClickListener(this);
+        imageViewQr = view.findViewById(R.id.imageViewQr);
 
-        //사용 단가 갖도 오기
+        //사용 단가 갖고 오기
         Set<String> userTypes = new HashSet<>(Arrays.asList("A", "B"));
         Map<String, Integer> unitPrices = onFindUnitPrices(userTypes);
-        textViewMemberUnitInput.setText(String.format("   :  %s 원", unitPrices.getOrDefault("A", 0)));
-        textViewNoMemberUnitInput.setText(String.format("   :  %s 원", unitPrices.getOrDefault("B", 0)));
-
-        frameMember = view.findViewById(R.id.frameMember);
-        frameMember.setOnClickListener(this);
-        frameNoMember = view.findViewById(R.id.frameNoMember);
-        frameNoMember.setOnClickListener(this);
-        frameNoMember.setVisibility(View.GONE);
+        textViewMemberUnitInput.setText(getString(R.string.chargeUnitFormat, String.valueOf(unitPrices.getOrDefault("A", 0))));
+        textViewNoMemberUnitInput.setText(getString(R.string.chargeUnitFormat, String.valueOf(unitPrices.getOrDefault("B", 0))));
 
         String selectPayment = ((MainActivity) MainActivity.mContext).getChargerConfiguration().getSelectPayment();
         if (Objects.equals(selectPayment, "1")) {
-            frameNoMember.setVisibility(View.INVISIBLE);
+            viewNoMember.setVisibility(View.INVISIBLE);
+        }
+
+        try {
+            if (!TextUtils.isEmpty(chargerConfiguration.getChargerId())) {
+                BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                Connector connector = ((MainActivity) MainActivity.mContext).getConnectorList().get(0);
+                String qrCodeURL = connector.getQrUrl();
+                Bitmap bitmap = barcodeEncoder.encodeBitmap(qrCodeURL, BarcodeFormat.QR_CODE, 140, 140);
+                imageViewQr.setImageBitmap(toGrayscale(bitmap));
+            }
+        } catch (Exception e) {
+            logger.error("QrCode : {}", e.getMessage());
         }
 
         return view;
@@ -159,37 +179,58 @@ public class AuthSelectFragment extends Fragment implements View.OnClickListener
     public void onClick(View v) {
         try {
             int getId = v.getId();
-            if (Objects.equals(getId, R.id.frameMember)) {
-                imageViewMemberCheck.setBackgroundResource(R.drawable.checked);
+            if (Objects.equals(getId, R.id.viewMember)) {
                 chargingCurrentData.setPaymentType(PaymentType.MEMBER);
-//                ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.SOC);
-//                ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.SOC, "SOC", null);
                 ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.MEMBER_CARD);
                 ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.MEMBER_CARD, "MEMBER_CARD", null);
-            } else if (Objects.equals(getId, R.id.frameNoMember)) {
+            } else if (Objects.equals(getId, R.id.viewNoMember)) {
                 GlobalVariables.setHumaxUserType("B");
-                imageViewNoMemberCheck.setBackgroundResource(R.drawable.checked);
                 chargingCurrentData.setPaymentType(PaymentType.CREDIT);
                 ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.SOC);
                 ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.SOC, "SOC", null);
+            } else if (Objects.equals(getId, R.id.viewQr)) {
+                ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.QR_CODE);
+                ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.QR_CODE, "QR_CODE", null);
             }
         } catch (Exception e) {
             logger.error(" AuthSelectFragment onClick error : {}", e.getMessage());
         }
     }
 
+    public Bitmap toGrayscale(Bitmap bmpOriginal) {
+        int width, height;
+        height = bmpOriginal.getHeight();
+        width = bmpOriginal.getWidth();
+
+        Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmpGrayscale);
+        Paint paint = new Paint();
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0);
+        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+        paint.setColorFilter(f);
+        c.drawBitmap(bmpOriginal, 0, 0, paint);
+        return bmpGrayscale;
+    }
+
     @Override
     public void onDetach() {
         super.onDetach();
-        uiCheckHandler.removeCallbacksAndMessages(null);
-        uiCheckHandler.removeMessages(0);
-        // back image
-        String[] requestStrings = new String[1];
-        SharedModel sharedModel = new ViewModelProvider(requireActivity()).get(SharedModel.class);
-        requestStrings[0] = String.valueOf(0);
-        sharedModel.setMutableLiveData(requestStrings);
-    }
+        try {
+            // back image
+            String[] requestStrings = new String[1];
+            SharedModel sharedModel = new ViewModelProvider(requireActivity()).get(SharedModel.class);
+            requestStrings[0] = String.valueOf(0);
+            sharedModel.setMutableLiveData(requestStrings);
 
+            if (uiCheckHandler != null) {
+                uiCheckHandler.removeCallbacksAndMessages(null);
+                uiCheckHandler.removeMessages(0);
+            }
+        } catch (Exception e) {
+            logger.error("AuthSelectFragment onDetach error : {}", e.getMessage());
+        }
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public Map<String, Integer> onFindUnitPrices(Set<String> userTypes) {
@@ -219,11 +260,11 @@ public class AuthSelectFragment extends Fragment implements View.OnClickListener
 
                             if ((now.isEqual(startAt) || now.isAfter(startAt)) && (now.isBefore(endAt) || now.isEqual(endAt))) {
                                 resultMap.put(userType, obj.getInt("price"));
-                                break; // 그 userType에 대해 단가 찾았으면 다음 라인으로 넘어감
+                                break; // 그 userType에 대한 단가 정보를 찾으면 다음 라인으로 넘어감
                             }
                         }
 
-                        // 모든 userType이 다 찾아졌으면 종료
+                        // 모든 userType을 찾으면 종료
                         if (resultMap.keySet().containsAll(userTypes)) {
                             break;
                         }
@@ -236,5 +277,4 @@ public class AuthSelectFragment extends Fragment implements View.OnClickListener
 
         return resultMap;
     }
-
 }
