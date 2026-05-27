@@ -152,7 +152,7 @@ public class ChargingFinishFragment extends Fragment implements View.OnClickList
                         txtChargePay.setText(payFormatter.format(chargingCurrentData.getPowerMeterUsePay()) + " 원") ;
                         txtChargeTime.setText(chargingCurrentData.getChargingUseTime());
 
-                        textViewTargetSoc.setText("목표 충전율: " + chargerConfiguration.getTargetSoc() + "%");
+                        textViewTargetSoc.setText("목표 충전율: " + chargingCurrentData.getTargetSoc() + "%");
                         powerUnitPrice = classUiProcess.getChargingCurrentData().getPowerUnitPrice();
                         txtPowerUnitPrice.setText(powerUnitPrice + " 원");
                     } catch (Exception e) {

@@ -56,6 +56,7 @@ public class ChargingCurrentData {
 
 
     int soc = 0;
+    int targetSoc = 80;
     long chargingRemainTime = 0;
     long batVoltage = 0;
     long batCurrent = 0;
@@ -190,6 +191,7 @@ public class ChargingCurrentData {
         setSoc(0);
         setBatCurrent(0);
         setBatVoltage(0);
+        setTargetSoc(80);
         remoteSmartChargingJsonArray = null;
     }
 
@@ -456,6 +458,14 @@ public class ChargingCurrentData {
 
     public void setSoc(int soc) {
         this.soc = soc;
+    }
+
+    public int getTargetSoc() {
+        return targetSoc;
+    }
+
+    public void setTargetSoc(int targetSoc) {
+        this.targetSoc = targetSoc;
     }
 
     public long getBatVoltage() {

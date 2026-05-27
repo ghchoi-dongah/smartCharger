@@ -43,6 +43,7 @@ public class SocFragment extends Fragment implements View.OnClickListener {
     TextView txtSocInput;
     SeekBar seekBar;
     Button btnConfirm, imgPlus, imgMinus;
+    ChargingCurrentData chargingCurrentData;
     int socValue ;
     int MIN_VALUE = 5;
 
@@ -82,6 +83,7 @@ public class SocFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_soc, container, false);
+        chargingCurrentData = ((MainActivity) MainActivity.mContext).getClassUiProcess().getChargingCurrentData();
         seekBar = view.findViewById(R.id.seekBar);
         txtSocInput = view.findViewById(R.id.txtSocInput);
         btnConfirm = view.findViewById(R.id.btnConfirm);
@@ -124,7 +126,6 @@ public class SocFragment extends Fragment implements View.OnClickListener {
         int getId = v.getId();
         if (Objects.equals(getId, R.id.btnConfirm)) {
             ((MainActivity) MainActivity.mContext).getChargerConfiguration().setTargetSoc(current);
-            ChargingCurrentData chargingCurrentData = ((MainActivity) MainActivity.mContext).getClassUiProcess().getChargingCurrentData();
             PaymentType paymentType = chargingCurrentData.getPaymentType();
             if (Objects.equals(paymentType, PaymentType.MEMBER)) {
                 ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.MEMBER_CARD);
@@ -146,9 +147,11 @@ public class SocFragment extends Fragment implements View.OnClickListener {
         } else if (Objects.equals(getId, R.id.imgPlus)) {
             seekBar.setProgress(seekBar.getProgress() + 1);
             txtSocInput.setText(String.format("%d%%", 50 + seekBar.getProgress() * 10));
+            chargingCurrentData.setTargetSoc(50 + seekBar.getProgress() * 10);
         } else if (Objects.equals(getId, R.id.imgMinus)) {
             seekBar.setProgress(seekBar.getProgress() -1);
             txtSocInput.setText(String.format("%d%%", 50 + seekBar.getProgress() * 10));
+            chargingCurrentData.setTargetSoc(50 + seekBar.getProgress() * 10);
         }
     }
 

@@ -88,6 +88,7 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
     DecimalFormat voltageFormatter = new DecimalFormat("#,###,##0.0");
     ZonedDateTimeConvert zonedDateTimeConvert = new ZonedDateTimeConvert();
     ChargerConfiguration chargerConfiguration;
+    ChargingCurrentData chargingCurrentData;
 
     private int progress = 0;
 
@@ -127,6 +128,8 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_charging, container, false);
         chargerConfiguration = ((MainActivity) MainActivity.mContext).getChargerConfiguration();
+        classUiProcess = ((MainActivity) MainActivity.mContext).getClassUiProcess();
+        chargingCurrentData = classUiProcess.getChargingCurrentData();
         txtSoc = view.findViewById(R.id.txtSoc);
         txtPowerUnitPrice = view.findViewById(R.id.txtPowerUnitPrice);
         txtChargePay = view.findViewById(R.id.txtChargePay);
@@ -148,11 +151,10 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
 //            mediaPlayer.start();
 //            onLimitPower(0);
             try {
-                classUiProcess = ((MainActivity) MainActivity.mContext).getClassUiProcess();
-                startTime = zonedDateTimeConvert.doStringDateToDate(classUiProcess.getChargingCurrentData().getChargingStartTime());
-                powerUnitPrice = classUiProcess.getChargingCurrentData().getPowerUnitPrice();
+                startTime = zonedDateTimeConvert.doStringDateToDate(chargingCurrentData.getChargingStartTime());
+                powerUnitPrice = chargingCurrentData.getPowerUnitPrice();
                 txtPowerUnitPrice.setText(powerUnitPrice + " 원");
-                textViewTargetSoc.setText("목표 충전율: " + chargerConfiguration.getTargetSoc() + "%");
+                textViewTargetSoc.setText("목표 충전율: " + chargingCurrentData.getTargetSoc() + "%");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -167,12 +169,11 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
         int getId = v.getId();
         if  (Objects.equals(getId, R.id.btnChargingStop)) {
             try {
-                ChargerConfiguration chargerConfiguration = ((MainActivity) MainActivity.mContext).getChargerConfiguration();
                 if (!Objects.equals(chargerConfiguration.getAuthMode(), "0")) {
                     ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.CHARGING_STOP_MESSAGE, "CHARGING_STOP_MESSAGE", null);
                 } else {
                     //서버 인증 모드인 경우
-                    PaymentType paymentType = classUiProcess.getChargingCurrentData().getPaymentType();
+                    PaymentType paymentType = chargingCurrentData.getPaymentType();
                     if (Objects.equals(paymentType, PaymentType.MEMBER) && chargerConfiguration.isStopConfirm()) {
                         //StopTransactionOnInvalidId
                         ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.MEMBER_CARD, "MEMBER_CARD", null);
@@ -199,23 +200,22 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
                     public void run() {
                         try {
                             long diffTime = 0;
-                            classUiProcess = ((MainActivity) MainActivity.mContext).getClassUiProcess();
                             useTime = zonedDateTimeConvert.doStringDateToDate(zonedDateTimeConvert.getStringCurrentTimeZone());
                             if (useTime != null) {
                                 diffTime = (useTime.getTime() - startTime.getTime()) / 1000;
                                 int hour = (int) diffTime / 3600;
                                 int minute = (int) (diffTime % 3600) / 60;
                                 int second = (int) diffTime % 60;
-                                classUiProcess.getChargingCurrentData().setChargingTime((int) diffTime);
+                                chargingCurrentData.setChargingTime((int) diffTime);
                                 txtChargeTime.setText(String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":" + String.format("%02d", second));
-                                classUiProcess.getChargingCurrentData().setChargingUseTime(txtChargeTime.getText().toString());
-                                txtChargePay.setText(payFormatter.format((long) classUiProcess.getChargingCurrentData().getPowerMeterUsePay()) + " 원");
-                                txtAmountOfCharge.setText(powerFormatter.format(classUiProcess.getChargingCurrentData().getPowerMeterUse() * 0.001) + " kWh");
-                                if (classUiProcess.getChargingCurrentData().getSoc() == 0) {
+                                chargingCurrentData.setChargingUseTime(txtChargeTime.getText().toString());
+                                txtChargePay.setText(payFormatter.format((long) chargingCurrentData.getPowerMeterUsePay()) + " 원");
+                                txtAmountOfCharge.setText(powerFormatter.format(chargingCurrentData.getPowerMeterUse() * 0.001) + " kWh");
+                                if (chargingCurrentData.getSoc() == 0) {
                                     txtSoc.setVisibility(View.INVISIBLE);
                                 } else {
                                     txtSoc.setVisibility(View.VISIBLE);
-                                    txtSoc.setText(classUiProcess.getChargingCurrentData().getSoc() + "%");
+                                    txtSoc.setText(chargingCurrentData.getSoc() + "%");
                                 }
 //
 //                                // 충전 남은 시간 : PLC 에서 지원 안함
