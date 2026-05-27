@@ -2,6 +2,7 @@ package com.dongah.smartcharger.pages;
 
 import android.annotation.SuppressLint;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -44,8 +45,9 @@ public class CreditCardFragment extends Fragment  {
     private String mParam1;
     private String mParam2;
 
+    int MAX_TIME = 60;
     int cnt = 0;
-    TextView txtInputAmt;
+    TextView txtInputAmt, textViewTagTimer;
     ImageView imgCreditCardTagging;
     AnimationDrawable animationDrawable;
     DecimalFormat amountFormatter;
@@ -87,10 +89,10 @@ public class CreditCardFragment extends Fragment  {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_credit_card, container, false);
         amountFormatter = new DecimalFormat("###,##0");
         txtInputAmt = view.findViewById(R.id.txtInputAmt);
+        textViewTagTimer = view.findViewById(R.id.textViewTagTimer);
 
         imgCreditCardTagging = view.findViewById(R.id.imgCreditCardTagging);
         imgCreditCardTagging.setBackgroundResource(R.drawable.creditcardtagging);
@@ -106,12 +108,14 @@ public class CreditCardFragment extends Fragment  {
         return view;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         try {
 //            MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.mContext, R.raw.creditcard);
 //            mediaPlayer.start();
+            textViewTagTimer.setText(MAX_TIME + "초");
 
             //화면 유지
             ((MainActivity) MainActivity.mContext).runOnUiThread(new Runnable() {
@@ -122,12 +126,13 @@ public class CreditCardFragment extends Fragment  {
                         @Override
                         public void run() {
                             cnt++;
-                            if (Objects.equals(cnt, 60)) {
+                            if (Objects.equals(cnt, MAX_TIME)) {
                                 countHandler.removeCallbacks(countRunnable);
                                 countHandler.removeCallbacksAndMessages(null);
                                 countHandler.removeMessages(0);
                                 ((MainActivity) MainActivity.mContext).getClassUiProcess().onHome();
                             } else {
+                                textViewTagTimer.setText((MAX_TIME - cnt) + "초");
                                 countHandler.postDelayed(countRunnable, 1000);
                             }
                         }
@@ -138,8 +143,28 @@ public class CreditCardFragment extends Fragment  {
 
 
         } catch (Exception e) {
-            logger.error("CreditCardFragment onViewCreated : {}", e.getMessage());
+            logger.error("onViewCreated error : {}", e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        try {
+            if (animationDrawable != null) {
+                animationDrawable.stop();
+            }
+
+            if (imgCreditCardTagging != null) {
+                Drawable bg = imgCreditCardTagging.getBackground();
+                if (bg instanceof AnimationDrawable) {
+                    ((AnimationDrawable) bg).stop();
+                }
+                imgCreditCardTagging.setBackground(null);
+            }
+        } catch (Exception e) {
+            logger.error("onDestroyView error : {}", e.getMessage(), e);
+        }
+        super.onDestroyView();
     }
 
 
@@ -151,6 +176,4 @@ public class CreditCardFragment extends Fragment  {
         requestStrings[0] = "0";
         sharedModel.setMutableLiveData(requestStrings);
     }
-
-
 }

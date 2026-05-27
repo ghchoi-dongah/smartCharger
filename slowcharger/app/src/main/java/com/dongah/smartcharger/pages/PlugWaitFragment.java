@@ -4,7 +4,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,13 +48,10 @@ public class PlugWaitFragment extends Fragment {
     private String mParam2;
 
     int cnt = 0;
-    boolean imgChange = false;
     TextView txtPlugWaitMessage;
 
     ImageView imageViewLoading;
     AnimationDrawable animationDrawable;
-    ImageView imgInlet, imgPlugConnector;
-    AnimationDrawable aniInlet, aniPlug;
     Handler countHandler;
     Runnable countRunnable;
 
@@ -168,7 +164,7 @@ public class PlugWaitFragment extends Fragment {
                 }
             });
         } catch (Exception e) {
-            logger.error("PlugWaitFragment onViewCreated : {}", e.getMessage());
+            logger.error("onViewCreated error : {}", e.getMessage(), e);
         }
     }
 
@@ -194,8 +190,7 @@ public class PlugWaitFragment extends Fragment {
             countRunnable = null;
 
         } catch (Exception e) {
-            Log.e("PlugWaitFragment", "onDestroyView error", e);
-            logger.error("PlugWaitFragment onDestroyView error : {}", e.getMessage());
+            logger.error("onDestroyView error : {}", e.getMessage(), e);
         }
         super.onDestroyView();
     }
@@ -216,7 +211,7 @@ public class PlugWaitFragment extends Fragment {
                 countHandler = null;
             }
         } catch (Exception e) {
-            logger.error("PlugWaitFragment onDetach : {}", e.getMessage());
+            logger.error("onDetach error : {}", e.getMessage(), e);
         }
     }
 

@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
         imgNetwork = findViewById(R.id.imgNetwork);
         textViewTime = findViewById(R.id.textViewTime);
         textViewVersionValue = findViewById(R.id.textViewVersionValue);
-        textViewVersionValue.setText("VER-" + GlobalVariables.VERSION + " | ");
+        textViewVersionValue.setText("VER-DEVW " + GlobalVariables.VERSION + " | ");
 
 
         //   ConfigurationKey read */
@@ -201,6 +201,33 @@ public class MainActivity extends AppCompatActivity {
             public void onConnected() {
                 logger.debug("connected");
 //                clientSocket.sendMessage("AT+CNUM");
+
+                clientSocket.start();
+
+                // 예: AT+CNUM 전송 후 +CNUM: 응답을 기다리고, 성공하면 AT$$DSCREEN? 전송
+                clientSocket.sendCommandExpectPrefix("AT+CNUM", "+CNUM:", 10000)
+                        .thenApply(line -> {
+                            // line 예: +CNUM: "LGU","+821222492396",145
+                            String[] parts = line.split(",");
+                            String raw = parts.length >= 2 ? parts[1].replace("\"","") : null;
+                            GlobalVariables.setIMSI(raw == null ? "" : parseToLocal(raw));
+                            return parseToLocal(raw); // 01222492396
+                        })
+                        .thenCompose(localNumber -> {
+                            Log.d("TCP","Parsed local number: " + localNumber);
+                            // 이어서 DSCREEN 명령
+                            return clientSocket.sendCommandExpectPrefix("AT$$DSCREEN?", "DSCREEN:", 5000);
+                        })
+                        .thenAccept(dscreenResp -> {
+                            GlobalVariables.setRSRP(parseToRSRP(dscreenResp));
+                            Log.d("TCP","DSCREEN response: " + dscreenResp);
+                            clientSocket.postDisconnected();
+                            clientSocket.closeSocket();
+                        })
+                        .exceptionally(ex -> {
+                            Log.e("TCP","Command chain error", ex);
+                            return null;
+                        });
             }
 
             @Override
@@ -228,32 +255,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("TCP","General recv: " + message);
             }
         });
-        clientSocket.start();
 
-        // 예: AT+CNUM 전송 후 +CNUM: 응답을 기다리고, 성공하면 AT$$DSCREEN? 전송
-        clientSocket.sendCommandExpectPrefix("AT+CNUM", "+CNUM:", 10000)
-                .thenApply(line -> {
-                    // line 예: +CNUM: "LGU","+821222492396",145
-                    String[] parts = line.split(",");
-                    String raw = parts.length >= 2 ? parts[1].replace("\"","") : null;
-                    GlobalVariables.setIMSI(raw == null ? "" : parseToLocal(raw));
-                    return parseToLocal(raw); // 01222492396
-                })
-                .thenCompose(localNumber -> {
-                    Log.d("TCP","Parsed local number: " + localNumber);
-                    // 이어서 DSCREEN 명령
-                    return clientSocket.sendCommandExpectPrefix("AT$$DSCREEN?", "DSCREEN:", 5000);
-                })
-                .thenAccept(dscreenResp -> {
-                    GlobalVariables.setRSRP(parseToRSRP(dscreenResp));
-                    Log.d("TCP","DSCREEN response: " + dscreenResp);
-                    clientSocket.postDisconnected();
-                    clientSocket.closeSocket();
-                })
-                .exceptionally(ex -> {
-                    Log.e("TCP","Command chain error", ex);
-                    return null;
-                });
 
 //        String baseUrl = chargerConfiguration.getServerConnectingString() + ":" + chargerConfiguration.getServerPort() +
 //                "/v2/" + chargerConfiguration.getChargerId();

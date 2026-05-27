@@ -152,7 +152,7 @@ public class ClassUiProcess implements RfCardReaderListener {
                     setoSeq(UiSeq.INIT);
                     setPowerMeterCheck(0);
                     txData.setPwmDuty((short) 100);
-                    txData.setUiSequence((short) 2);
+                    txData.setUiSequence((short) 1);
                     onMeterValueStop();
                     if (chargingCurrentData.isReBoot() && onRebootCheck()) {
                         setUiSeq(UiSeq.REBOOTING);

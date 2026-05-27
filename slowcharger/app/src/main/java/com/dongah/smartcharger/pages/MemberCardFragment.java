@@ -5,7 +5,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,7 +118,10 @@ public class MemberCardFragment extends Fragment implements View.OnClickListener
                         @Override
                         public void run() {
                             cnt++;
-                            if (Objects.equals(cnt, 20)) {
+                            if (Objects.equals(cnt, MAX_TIME)) {
+                                countHandler.removeCallbacks(countRunnable);
+                                countHandler.removeCallbacksAndMessages(null);
+                                countHandler.removeMessages(0);
                                 ((MainActivity) MainActivity.mContext).getClassUiProcess().onHome();
                             } else {
                                 textViewTagTimer.setText((MAX_TIME - cnt) + "초");
@@ -132,7 +134,7 @@ public class MemberCardFragment extends Fragment implements View.OnClickListener
             });
 
         } catch (Exception e) {
-            logger.error(" MemberCardFragment error : {}", e.getMessage());
+            logger.error("onViewCreated error : {}", e.getMessage(), e);
         }
     }
 
@@ -160,8 +162,7 @@ public class MemberCardFragment extends Fragment implements View.OnClickListener
                 imgMemberCardTagging.setBackground(null);
             }
         } catch (Exception e) {
-            Log.e("MemberCardFragment", "onDestroyView error", e);
-            logger.error("MemberCardFragment onDestroyView error : {}", e.getMessage());
+            logger.error("onDestroyView error : {}", e.getMessage(), e);
         }
         super.onDestroyView();
     }
@@ -169,14 +170,5 @@ public class MemberCardFragment extends Fragment implements View.OnClickListener
     @Override
     public void onDetach() {
         super.onDetach();
-        try {
-            if (countHandler != null) {
-                countHandler.removeCallbacks(countRunnable);
-                countHandler.removeCallbacksAndMessages(null);
-                countHandler.removeMessages(0);
-            }
-        } catch (Exception e) {
-            logger.error("MemberCardFragment onDetach error : {}", e.getMessage());
-        }
     }
 }

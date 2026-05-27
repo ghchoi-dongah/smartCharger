@@ -4,7 +4,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -339,8 +338,7 @@ public class MemberCardWaitFragment extends Fragment {
             countRunnable = null;
 
         } catch (Exception e) {
-            Log.e("MemberCardWaitFragment", "onDestroyView error", e);
-            logger.error("MemberCardWaitFragment onDestroyView error : {}", e.getMessage());
+            logger.error("onDestroyView error : {}", e.getMessage(), e);
         }
         super.onDestroyView();
     }
@@ -354,7 +352,7 @@ public class MemberCardWaitFragment extends Fragment {
                 countHandler = null;
             }
         } catch (Exception e) {
-            logger.error("MemberCardWaitFragment onDetach : {} ", e.getMessage());
+            logger.error("onDetach error : {} ", e.getMessage(), e);
         }
     }
 }

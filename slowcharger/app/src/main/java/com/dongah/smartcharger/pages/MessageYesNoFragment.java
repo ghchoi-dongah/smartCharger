@@ -3,7 +3,7 @@ package com.dongah.smartcharger.pages;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,11 +43,13 @@ public class MessageYesNoFragment extends Fragment implements View.OnClickListen
     private String mParam1;
     private String mParam2;
 
+    int cnt = 5;
     View view;
     TextView txtMessage;
     Button btnCancel, btnConfirm;
     ImageView imageViewLoading;
     AnimationDrawable animationDrawable;
+    Handler uiCheckHandler;
 
 
     public MessageYesNoFragment() {
@@ -126,10 +128,23 @@ public class MessageYesNoFragment extends Fragment implements View.OnClickListen
 
                 byte[] report = stopAllRequest.makeStopAllRequest("STOP", (short) 534, (short) 123);
                 ((MainActivity) MainActivity.mContext).getPlcModem().onSend(report);
+
+                uiCheckHandler = new Handler();
+                uiCheckHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (cnt == 0) {
+                            ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.FINISH_WAIT);
+                        } else{
+                            cnt--;
+                            uiCheckHandler.postDelayed(this, 1000);
+                        }
+                    }
+                }, 1000);
             }
 
         } catch (Exception e) {
-            logger.error("MessageYesNoFragment  onClick : {} ", e.getMessage());
+            logger.error("onClick error : {} ", e.getMessage(),  e);
         }
     }
 
@@ -148,8 +163,7 @@ public class MessageYesNoFragment extends Fragment implements View.OnClickListen
                 imageViewLoading.setBackground(null);
             }
         } catch (Exception e) {
-            Log.e("MessageYesNoFragment", "onDestroyView error", e);
-            logger.error("MessageYesNoFragment onDestroyView error : {}", e.getMessage());
+            logger.error("onDestroyView error : {}", e.getMessage(), e);
         }
         super.onDestroyView();
     }
