@@ -110,7 +110,7 @@ public class QrFragment extends Fragment {
 
 
         } catch (Exception e) {
-            logger.error("QR_CODE onViewCreated : {}", e.getMessage());
+            logger.error("onViewCreated error : {}", e.getMessage(), e);
         }
     }
 
@@ -129,7 +129,7 @@ public class QrFragment extends Fragment {
               uiCheckHandler.removeMessages(0);
           }
         } catch (Exception e) {
-            logger.error("QrFragment onDetach : {}", e.getMessage());
+            logger.error("onDetach error : {}", e.getMessage(), e);
         }
     }
 }

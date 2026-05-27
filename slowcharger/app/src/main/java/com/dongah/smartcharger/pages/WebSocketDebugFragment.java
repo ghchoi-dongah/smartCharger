@@ -79,7 +79,6 @@ public class WebSocketDebugFragment extends Fragment implements View.OnClickList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_web_socket_debug, container, false);
 //        ((MainActivity) MainActivity.mContext).getSocketReceiveMessage().setSocketMessageDebugListener(this);
         btnWebClose = view.findViewById(R.id.btn_web_close);
@@ -129,7 +128,7 @@ public class WebSocketDebugFragment extends Fragment implements View.OnClickList
                     txtDebugMessage.append(sMessageHeader + text + "\n");
                     txtDebugMessage.setMovementMethod(new ScrollingMovementMethod());
                 } catch (Exception e) {
-                    logger.error(" onMessageReceiveDebugEvent error :  {}", e.getMessage());
+                    logger.error("onMessageReceiveDebugEvent error :  {}", e.getMessage());
                 }
             }
         });

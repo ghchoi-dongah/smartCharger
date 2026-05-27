@@ -8,7 +8,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -288,17 +287,9 @@ public class ConfigSettingFragment extends Fragment implements View.OnClickListe
                     imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                 }
             } catch (Exception e) {
-                logger.error(" config - onClick {}", e.getMessage());
+                logger.error("config - onClick {}", e.getMessage());
             }
         } else if (Objects.equals(v.getId(), R.id.btnConfigSave)) {
-//            if (TextUtils.isEmpty(editChargerId.getText().toString())) {
-//                editChargerId.setFocusableInTouchMode(true);
-//                editChargerId.requestFocus();
-//                Toast.makeText(((MainActivity) MainActivity.mContext), R.string.chargerIdSaveFail, Toast.LENGTH_LONG).show();
-//                return;
-//            }
-
-
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.configSaveTitle)
                     .setMessage(R.string.configSaveYesNo)
@@ -340,7 +331,7 @@ public class ConfigSettingFragment extends Fragment implements View.OnClickListe
             chargerConfiguration.onSaveConfiguration();
             chargerConfiguration.onLoadConfiguration();
         } catch (Exception e) {
-            Log.e("ConfigSettingFragment", e.toString());
+            logger.error("onSaveConfiguration error : {}", e.getMessage(), e);
         }
     }
 
@@ -375,7 +366,7 @@ public class ConfigSettingFragment extends Fragment implements View.OnClickListe
             chargerConfiguration.setSigned(chkSigned.isChecked());
 
         } catch (Exception e) {
-            logger.error("onConfigurationUpdate error : {}", e.getMessage());
+            logger.error("onConfigurationUpdate error : {}", e.getMessage(), e);
         }
     }
 

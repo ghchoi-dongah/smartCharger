@@ -140,7 +140,7 @@ public class InitFragment extends Fragment implements View.OnClickListener {
                 BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
                 Connector connector = ((MainActivity) MainActivity.mContext).getConnectorList().get(0);
                 String qrCodeURL = connector.getQrUrl();
-                Bitmap bitmap = barcodeEncoder.encodeBitmap(qrCodeURL,BarcodeFormat.QR_CODE, 600, 600);
+                Bitmap bitmap = barcodeEncoder.encodeBitmap(qrCodeURL,BarcodeFormat.QR_CODE, 120, 120);
                 btnQr.setImageBitmap(toGrayscale(bitmap));
             }
         } catch (Exception e) {
@@ -177,7 +177,7 @@ public class InitFragment extends Fragment implements View.OnClickListener {
             requestStrings[0] = String.valueOf(0);
             sharedModel.setMutableLiveData(requestStrings);
         } catch (Exception e) {
-            logger.error("InitFragment onDetach error : {}" , e.getMessage());
+            logger.error("onDetach error : {}" , e.getMessage(), e);
         }
     }
 

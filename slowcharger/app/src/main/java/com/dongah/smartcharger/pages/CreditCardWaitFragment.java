@@ -4,7 +4,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,7 +128,7 @@ public class CreditCardWaitFragment extends Fragment {
             // 신용 카드 결제
 //            onTls3800Payment();
         } catch (Exception e) {
-            logger.error(" CreditCardWaitFragment onViewCreated : {}", e.getMessage());
+            logger.error("onViewCreated : {}", e.getMessage(), e);
         }
     }
 
@@ -155,8 +154,7 @@ public class CreditCardWaitFragment extends Fragment {
             countRunnable = null;
 
         } catch (Exception e) {
-            Log.e("CreditCardWaitFragment", "onDestroyView error", e);
-            logger.error("CreditCardWaitFragment onDestroyView error : {}", e.getMessage());
+            logger.error("onDestroyView error : {}", e.getMessage(), e);
         }
         super.onDestroyView();
     }
@@ -170,7 +168,7 @@ public class CreditCardWaitFragment extends Fragment {
                 countHandler = null;
             }
         } catch (Exception e) {
-            logger.error("CreditCardWaitFragment onDetach error : {}", e.getMessage());
+            logger.error("onDetach error : {}", e.getMessage(), e);
         }
     }
 }

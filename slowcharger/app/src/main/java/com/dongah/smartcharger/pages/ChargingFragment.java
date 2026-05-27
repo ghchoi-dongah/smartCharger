@@ -33,14 +33,12 @@ import com.dongah.smartcharger.websocket.ocpp.core.Reason;
 import com.dongah.smartcharger.websocket.ocpp.core.StatusNotificationRequest;
 import com.dongah.smartcharger.websocket.ocpp.core.StopTransactionRequest;
 import com.dongah.smartcharger.websocket.ocpp.utilities.ZonedDateTimeConvert;
-import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.mikhaellopez.circularfillableloaders.CircularFillableLoaders;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -74,10 +72,8 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
     private String mParam1;
     private String mParam2;
 
-    TextView txtChargePay, txtChargeTime, txtAmountOfCharge, txtPowerUnitPrice;
-    CircularProgressIndicator progressCircular;
+    TextView txtChargePay, txtChargeTime, txtAmountOfCharge, txtPowerUnitPrice, textViewTargetSoc;
     Button  btnChargingStop;
-    CircularFillableLoaders circularFillableLoaders;
     TextView txtSoc;
 
     Handler uiUpdateHandler;
@@ -91,6 +87,7 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
     DecimalFormat powerFormatter = new DecimalFormat("#,###,##0.00");
     DecimalFormat voltageFormatter = new DecimalFormat("#,###,##0.0");
     ZonedDateTimeConvert zonedDateTimeConvert = new ZonedDateTimeConvert();
+    ChargerConfiguration chargerConfiguration;
 
     private int progress = 0;
 
@@ -129,6 +126,7 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_charging, container, false);
+        chargerConfiguration = ((MainActivity) MainActivity.mContext).getChargerConfiguration();
         txtSoc = view.findViewById(R.id.txtSoc);
         txtPowerUnitPrice = view.findViewById(R.id.txtPowerUnitPrice);
         txtChargePay = view.findViewById(R.id.txtChargePay);
@@ -136,7 +134,7 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
         txtAmountOfCharge = view.findViewById(R.id.txtAmountOfCharge);
         btnChargingStop = view.findViewById(R.id.btnChargingStop);
         btnChargingStop.setOnClickListener(this);
-        progressCircular = view.findViewById(R.id.progressCircular);
+        textViewTargetSoc = view.findViewById(R.id.textViewTargetSoc);
         return view;
     }
 
@@ -149,19 +147,18 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
 //            MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.mContext, R.raw.charging);
 //            mediaPlayer.start();
 //            onLimitPower(0);
-            progressCircular.isIndeterminate();
             try {
                 classUiProcess = ((MainActivity) MainActivity.mContext).getClassUiProcess();
                 startTime = zonedDateTimeConvert.doStringDateToDate(classUiProcess.getChargingCurrentData().getChargingStartTime());
                 powerUnitPrice = classUiProcess.getChargingCurrentData().getPowerUnitPrice();
                 txtPowerUnitPrice.setText(powerUnitPrice + " 원");
-                progressCircular.setProgress(classUiProcess.getChargingCurrentData().getSoc(), true);
+                textViewTargetSoc.setText("목표 충전율: " + chargerConfiguration.getTargetSoc() + "%");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
             onCharging();
         } catch (Exception e) {
-            logger.error("ChargingFragment onViewCreated : {}", e.getMessage());
+            logger.error("onViewCreated error : {}", e.getMessage(), e);
         }
     }
 
@@ -184,7 +181,7 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
                     }
                 }
             } catch (Exception e) {
-                logger.error("Charging onClick error : {}", e.getMessage());
+                logger.error("onClick error : {}", e.getMessage(), e);
             }
         }
     }
@@ -220,7 +217,6 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
                                     txtSoc.setVisibility(View.VISIBLE);
                                     txtSoc.setText(classUiProcess.getChargingCurrentData().getSoc() + "%");
                                 }
-                                progressCircular.setProgress(classUiProcess.getChargingCurrentData().getSoc(), true);
 //
 //                                // 충전 남은 시간 : PLC 에서 지원 안함
 //                                int rHour = classUiProcess.getChargingCurrentData().getRemaintime() / 3600;
@@ -232,7 +228,7 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
 //                            onLimitPower((int) diffTime);
 
                         } catch (Exception e) {
-                            logger.error("ChargingFragment onCharging : {}", e.getMessage());
+                            logger.error("onCharging error: {}", e.getMessage(), e);
                         }
                     }
                 });
@@ -251,7 +247,7 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
             requestStrings[0] = "0";
             sharedModel.setMutableLiveData(requestStrings);
         } catch (Exception e) {
-            logger.error("ChargingFragment onDetach error : {}", e.getMessage());
+            logger.error("onDetach error : {}", e.getMessage(), e);
         }
     }
 
@@ -318,7 +314,7 @@ public class ChargingFragment extends Fragment implements View.OnClickListener, 
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(10);
         } catch (Exception e) {
-            logger.error(" charging onWindowFocusChanged : {}", e.getMessage());
+            logger.error("onWindowFocusChanged error : {}", e.getMessage(), e);
         }
     }
 

@@ -1,18 +1,11 @@
 package com.dongah.smartcharger.pages;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,10 +23,7 @@ import com.dongah.smartcharger.basefunction.PaymentType;
 import com.dongah.smartcharger.basefunction.UiSeq;
 import com.dongah.smartcharger.utils.SharedModel;
 import com.dongah.smartcharger.websocket.ocpp.utilities.ZonedDateTimeConvert;
-import com.dongah.smartcharger.websocket.socket.Connector;
 import com.dongah.smartcharger.websocket.socket.SocketReceiveMessage;
-import com.google.zxing.BarcodeFormat;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -70,9 +60,8 @@ public class AuthSelectFragment extends Fragment implements View.OnClickListener
     private String mParam1;
     private String mParam2;
 
-    View viewMember, viewNoMember, viewQr;
+    View viewMember, viewNoMember;
     TextView textViewMemberUnitInput, textViewNoMemberUnitInput;
-    ImageView imageViewQr;
     ChargerConfiguration chargerConfiguration;
     ChargingCurrentData chargingCurrentData;
     Handler uiCheckHandler;
@@ -125,9 +114,6 @@ public class AuthSelectFragment extends Fragment implements View.OnClickListener
         viewMember.setOnClickListener(this);
         viewNoMember = view.findViewById(R.id.viewNoMember);
         viewNoMember.setOnClickListener(this);
-        viewQr = view.findViewById(R.id.viewQr);
-        viewQr.setOnClickListener(this);
-        imageViewQr = view.findViewById(R.id.imageViewQr);
 
         //사용 단가 갖고 오기
         Set<String> userTypes = new HashSet<>(Arrays.asList("A", "B"));
@@ -138,18 +124,6 @@ public class AuthSelectFragment extends Fragment implements View.OnClickListener
         String selectPayment = ((MainActivity) MainActivity.mContext).getChargerConfiguration().getSelectPayment();
         if (Objects.equals(selectPayment, "1")) {
             viewNoMember.setVisibility(View.INVISIBLE);
-        }
-
-        try {
-            if (!TextUtils.isEmpty(chargerConfiguration.getChargerId())) {
-                BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-                Connector connector = ((MainActivity) MainActivity.mContext).getConnectorList().get(0);
-                String qrCodeURL = connector.getQrUrl();
-                Bitmap bitmap = barcodeEncoder.encodeBitmap(qrCodeURL, BarcodeFormat.QR_CODE, 140, 140);
-                imageViewQr.setImageBitmap(toGrayscale(bitmap));
-            }
-        } catch (Exception e) {
-            logger.error("QrCode : {}", e.getMessage());
         }
 
         return view;
@@ -171,7 +145,7 @@ public class AuthSelectFragment extends Fragment implements View.OnClickListener
             }, 60000);
 
         } catch (Exception e) {
-            logger.error(" AuthSelectFragment error : {}", e.getMessage());
+            logger.error("onViewCreated error : {}", e.getMessage());
         }
     }
 
@@ -188,30 +162,12 @@ public class AuthSelectFragment extends Fragment implements View.OnClickListener
                 chargingCurrentData.setPaymentType(PaymentType.CREDIT);
                 ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.SOC);
                 ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.SOC, "SOC", null);
-            } else if (Objects.equals(getId, R.id.viewQr)) {
-                ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.QR_CODE);
-                ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.QR_CODE, "QR_CODE", null);
             }
         } catch (Exception e) {
-            logger.error(" AuthSelectFragment onClick error : {}", e.getMessage());
+            logger.error("onClick error : {}", e.getMessage());
         }
     }
 
-    public Bitmap toGrayscale(Bitmap bmpOriginal) {
-        int width, height;
-        height = bmpOriginal.getHeight();
-        width = bmpOriginal.getWidth();
-
-        Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(bmpGrayscale);
-        Paint paint = new Paint();
-        ColorMatrix cm = new ColorMatrix();
-        cm.setSaturation(0);
-        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
-        paint.setColorFilter(f);
-        c.drawBitmap(bmpOriginal, 0, 0, paint);
-        return bmpGrayscale;
-    }
 
     @Override
     public void onDetach() {
@@ -228,7 +184,7 @@ public class AuthSelectFragment extends Fragment implements View.OnClickListener
                 uiCheckHandler.removeMessages(0);
             }
         } catch (Exception e) {
-            logger.error("AuthSelectFragment onDetach error : {}", e.getMessage());
+            logger.error("onDetach error : {}", e.getMessage(), e);
         }
     }
 
@@ -272,7 +228,7 @@ public class AuthSelectFragment extends Fragment implements View.OnClickListener
                 }
             }
         } catch (Exception e) {
-            logger.error("onFindUnitPrices error : {}", e.getMessage());
+            logger.error("onFindUnitPrices error : {}", e.getMessage(), e);
         }
 
         return resultMap;

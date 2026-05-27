@@ -21,7 +21,7 @@
         android:id="@+id/textViewCreditCardSub"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="6dp"
         android:gravity="center"
         android:text="@string/creditCardTaggingSubMessage"
         android:textSize="22sp"
@@ -64,7 +64,7 @@
         android:id="@+id/imgCardSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="60dp"
         android:layout_marginEnd="30dp"
         android:importantForAccessibility="no"
@@ -81,5 +81,15 @@
         android:background="@drawable/creditcardtagging"
         app:layout_constraintLeft_toLeftOf="@id/imgCardSpinner"
         app:layout_constraintTop_toTopOf="@id/imgCardSpinner" />
+
+    <TextView
+        android:id="@+id/textViewTagTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0초"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="@id/imgCardSpinner"
+        app:layout_constraintEnd_toEndOf="@id/imgCardSpinner"
+        app:layout_constraintTop_toBottomOf="@id/imgCardSpinner" />
 
 </androidx.constraintlayout.widget.ConstraintLayout >

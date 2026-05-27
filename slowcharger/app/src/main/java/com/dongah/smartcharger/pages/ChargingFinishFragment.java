@@ -24,7 +24,6 @@ import com.dongah.smartcharger.handler.ProcessHandler;
 import com.dongah.smartcharger.websocket.ocpp.core.ChargePointStatus;
 import com.dongah.smartcharger.websocket.socket.SocketReceiveMessage;
 import com.dongah.smartcharger.websocket.socket.SocketState;
-import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,14 +51,19 @@ public class ChargingFinishFragment extends Fragment implements View.OnClickList
 
 
     Button btnStopConfirm;
-    CircularProgressIndicator progressCircular;
-    TextView  txtSoc, txtAmountOfCharge, txtChargePay, txtChargeTime;
+    TextView  txtSoc, txtAmountOfCharge, txtChargePay, txtChargeTime, txtPowerUnitPrice, textViewTargetSoc;
+    double powerUnitPrice = 0f;
+
+    MainActivity activity;
     ClassUiProcess classUiProcess;
     ChargingCurrentData chargingCurrentData;
+    ChargerConfiguration chargerConfiguration;
+
     DecimalFormat payFormatter = new DecimalFormat("#,###,##0");
     DecimalFormat unitPriceFormatter = new DecimalFormat("#,###,##0.0");
     DecimalFormat powerFormatter = new DecimalFormat("#,###,##0.00");
     Handler uiCheckHandler, paymentHandler;
+
 
     public ChargingFinishFragment() {
         // Required empty public constructor
@@ -102,9 +106,12 @@ public class ChargingFinishFragment extends Fragment implements View.OnClickList
         txtChargeTime = view.findViewById(R.id.txtChargeTime);
         btnStopConfirm = view.findViewById(R.id.btnStopConfirm);
         btnStopConfirm.setOnClickListener(this);
-        progressCircular = view.findViewById(R.id.progressCircular);
+        txtPowerUnitPrice = view.findViewById(R.id.txtPowerUnitPrice);
+        textViewTargetSoc = view.findViewById(R.id.textViewTargetSoc);
 
-        classUiProcess = ((MainActivity) MainActivity.mContext).getClassUiProcess();
+        activity = (MainActivity) MainActivity.mContext;
+        chargerConfiguration = activity.getChargerConfiguration();
+        classUiProcess = activity.getClassUiProcess();
         chargingCurrentData = classUiProcess.getChargingCurrentData();
         classUiProcess.onStopData();
         return view;
@@ -114,7 +121,6 @@ public class ChargingFinishFragment extends Fragment implements View.OnClickList
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         try {
-            progressCircular.isIndeterminate();
 //            MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.mContext, R.raw.chargingfinsih);
 //            mediaPlayer.start();
             //unplug check 후 초기 화면
@@ -134,15 +140,27 @@ public class ChargingFinishFragment extends Fragment implements View.OnClickList
                 @SuppressLint("SetTextI18n")
                 @Override
                 public void run() {
-                    txtSoc.setText(chargingCurrentData.getSoc() == 0 ? "미지원" : chargingCurrentData.getSoc() + "%");
-                    txtAmountOfCharge.setText(powerFormatter.format(chargingCurrentData.getPowerMeterUse() * 0.001) + " kWh");
-                    txtChargePay.setText(payFormatter.format(chargingCurrentData.getPowerMeterUsePay()) + " 원") ;
-                    txtChargeTime.setText(chargingCurrentData.getChargingUseTime());
-                    progressCircular.setProgress(chargingCurrentData.getSoc(), true);
+                    try {
+                        if (chargingCurrentData.getSoc() == 0) {
+                            txtSoc.setVisibility(View.INVISIBLE);
+                        } else {
+                            txtSoc.setVisibility(View.INVISIBLE);
+                            txtSoc.setText(chargingCurrentData.getSoc() + "%");
+                        }
+//                    txtSoc.setText(chargingCurrentData.getSoc() == 0 ? "미지원" : chargingCurrentData.getSoc() + "%");
+                        txtAmountOfCharge.setText(powerFormatter.format(chargingCurrentData.getPowerMeterUse() * 0.001) + " kWh");
+                        txtChargePay.setText(payFormatter.format(chargingCurrentData.getPowerMeterUsePay()) + " 원") ;
+                        txtChargeTime.setText(chargingCurrentData.getChargingUseTime());
+
+                        textViewTargetSoc.setText("목표 충전율: " + chargerConfiguration.getTargetSoc() + "%");
+                        powerUnitPrice = classUiProcess.getChargingCurrentData().getPowerUnitPrice();
+                        txtPowerUnitPrice.setText(powerUnitPrice + " 원");
+                    } catch (Exception e) {
+                        logger.error("onViewCreated charging result error: {}", e.getMessage(), e);
+                    }
 
                     try {
                         //result price
-                        ChargerConfiguration chargerConfiguration = ((MainActivity) MainActivity.mContext).getChargerConfiguration();
                         SocketReceiveMessage socketReceiveMessage = ((MainActivity) MainActivity.mContext).getSocketReceiveMessage();
                         ProcessHandler processHandler = ((MainActivity) MainActivity.mContext).getProcessHandler();
                         SocketState state = socketReceiveMessage.getSocket().getState();
@@ -173,12 +191,12 @@ public class ChargingFinishFragment extends Fragment implements View.OnClickList
                             }
                         }
                     } catch (Exception e) {
-                        logger.error(" result price send fail : {}", e.getMessage());
+                        logger.error("result price send fail : {}", e.getMessage());
                     }
                 }
             });
         } catch (Exception e) {
-            logger.error("onViewCreated : {}", e.getMessage());
+            logger.error("onViewCreated error : {}", e.getMessage(), e);
         }
     }
 
