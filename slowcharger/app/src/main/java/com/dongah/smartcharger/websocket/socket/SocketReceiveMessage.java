@@ -379,6 +379,7 @@ public class SocketReceiveMessage extends JSONCommunicator implements SocketInte
                                                 false));
                                         // Custom Unit Price
                                         GlobalVariables.setCustomUnitPriceReq(true);
+                                        GlobalVariables.setHumaxUserType("A");
                                         processHandler.sendMessage(onMakeHandlerMessage(
                                                 GlobalVariables.MESSAGE_CUSTOM_UNIT_PRICE,
                                                 connectorId,
@@ -711,7 +712,8 @@ public class SocketReceiveMessage extends JSONCommunicator implements SocketInte
                                         boolean chk;
                                         File file = new File(GlobalVariables.getRootPath() + File.separator + GlobalVariables.UNIT_FILE_NAME);
 
-                                        if (file.exists() && fileManagement.countFileRows(file) >= 2 ) chk = file.delete();
+//                                        if (file.exists() && fileManagement.countFileRows(file) >= 2 ) chk = file.delete();
+                                        if (Objects.equals(GlobalVariables.getHumaxUserType(), "A") && file.exists()) chk = file.delete();
                                         chk = fileManagement.stringToFileSave(GlobalVariables.getRootPath(), GlobalVariables.UNIT_FILE_NAME, dataJson.toString(), true);
                                         if (Objects.equals(GlobalVariables.getHumaxUserType(), "A")) {
                                             GlobalVariables.setHumaxUserType("B");
