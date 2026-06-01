@@ -466,8 +466,8 @@ public class MainActivity extends AppCompatActivity {
                                 ConnectionListJsonParse connectionListJsonParse = new ConnectionListJsonParse();
                                 connectorList = connectionListJsonParse.parseConnectorList(response);
 
-//                                runOnUiThread(() -> textViewChargerId.setText("ID: " + connectorList.get(0).getSearchKey()));
                                 runOnUiThread(() -> chargerConfiguration.setChargerId(String.valueOf(connectorList.get(0).getSearchKey())));
+                                chargerConfiguration.onSaveConfiguration(); // chargerId save
 
                                 String baseUrl = chargerConfiguration.getServerConnectingString() + "/" + GlobalVariables.getHumaxClientId();
                                 socketReceiveMessage = new SocketReceiveMessage(baseUrl);

@@ -1,5 +1,6 @@
 package com.dongah.smartcharger.basefunction;
 
+import com.dongah.smartcharger.MainActivity;
 import com.dongah.smartcharger.websocket.ocpp.core.ChargePointErrorCode;
 import com.dongah.smartcharger.websocket.ocpp.core.ChargePointStatus;
 import com.dongah.smartcharger.websocket.ocpp.core.Reason;
@@ -130,6 +131,7 @@ public class ChargingCurrentData {
 
     //charging limit fee
     int HmChargingLimitFee = 0;
+    ChargerConfiguration chargerConfiguration = ((MainActivity) MainActivity.mContext).getChargerConfiguration();
 
 
     public ChargingCurrentData() {
@@ -191,7 +193,7 @@ public class ChargingCurrentData {
         setSoc(0);
         setBatCurrent(0);
         setBatVoltage(0);
-        setTargetSoc(80);
+        setTargetSoc(chargerConfiguration.getTargetSoc());
         remoteSmartChargingJsonArray = null;
     }
 

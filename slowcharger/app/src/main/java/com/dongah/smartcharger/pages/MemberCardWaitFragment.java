@@ -128,6 +128,9 @@ public class MemberCardWaitFragment extends Fragment {
                         public void run() {
                             cnt++;
                             if (Objects.equals(cnt, 20)) {
+                                countHandler.removeCallbacks(countRunnable);
+                                countHandler.removeCallbacksAndMessages(null);
+                                countHandler.removeMessages(0);
                                 ((MainActivity) MainActivity.mContext).getClassUiProcess().onHome();
                             } else {
 //                                txtCount.setText(String.valueOf(cnt));
@@ -312,7 +315,7 @@ public class MemberCardWaitFragment extends Fragment {
                 }
             }
         } catch (Exception e) {
-            logger.error(" MemberCardWaitFragment error : {}", e.getMessage());
+            logger.error("onViewCreated error : {}", e.getMessage());
         }
     }
 

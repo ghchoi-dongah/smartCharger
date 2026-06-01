@@ -78,7 +78,7 @@
 
     <string name="txtChargerType">충전기 타입</string>
     <string name="txtModel">충전기 모델명</string>
-    <string name="txtChargerId">충전소 ID</string>
+    <string name="txtChargerId">충전기 ID</string>
     <string name="txtHttpURL">초기 접속 URL</string>
     <string name="txtServerURL">서버 URL</string>
     <string name="txtServerPort">서버 Port</string>

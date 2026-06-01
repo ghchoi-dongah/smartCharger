@@ -21,7 +21,7 @@
     <FrameLayout
         android:id="@+id/frameBody"
         android:layout_width="match_parent"
-        android:layout_height="388dp"
+        android:layout_height="380dp"
         android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@id/frameTop"
         app:layout_constraintStart_toStartOf="parent" />
@@ -29,7 +29,7 @@
     <FrameLayout
         android:id="@+id/frameFooter"
         android:layout_width="match_parent"
-        android:layout_height="32dp"
+        android:layout_height="40dp"
         android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" >
@@ -46,7 +46,6 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintHorizontal_bias="0.27"
                 android:background="@drawable/nonetwork"
-                android:layout_marginStart="20dp"
                 android:importantForAccessibility="no"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -59,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:text="VER-DEVW 1.0.0 | "
-                android:textSize="18sp"
+                android:textSize="24sp"
                 android:textColor="@color/white"
                 app:layout_constraintTop_toTopOf="@id/imgNetwork"
                 app:layout_constraintStart_toEndOf="@id/imgNetwork"
@@ -70,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="2026-01-15 12:47:50"
-                android:textSize="18sp"
+                android:textSize="24sp"
                 android:textColor="@color/white"
                 app:layout_constraintTop_toTopOf="@id/imgNetwork"
                 app:layout_constraintStart_toEndOf="@id/textViewVersionValue"

@@ -86,37 +86,18 @@ public class HeaderFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_header, container, false);
-
+        chargerConfiguration = ((MainActivity) MainActivity.mContext).getChargerConfiguration();
+        textViewChargerId = view.findViewById(R.id.textViewChargerId);
         btnHome = view.findViewById(R.id.btnHome);
         btnHome.setOnClickListener(this);
-
         btnLogo = view.findViewById(R.id.btnLogo);
-        btnLogo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (clickedCnt > 8) {
-                    try {
-                        UiSeq uiSeq = ((MainActivity) MainActivity.mContext).getClassUiProcess().getUiSeq();
-                        if (Objects.equals(uiSeq, UiSeq.INIT) | Objects.equals(uiSeq, UiSeq.FAULT)) {
-                            ((MainActivity) MainActivity.mContext).runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.ADMIN_PASS);
-                                    ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.ADMIN_PASS,"ADMIN_PASS",null);
-                                }
-                            });
-                        }
-                        clickedCnt = 0;
-                    } catch (Exception e) {
-                        logger.error(e.getMessage());
-                    }
-                }
-                clickedCnt++;
-            }
-        });
-        textViewChargerId = view.findViewById(R.id.textViewChargerId);
-        chargerConfiguration = ((MainActivity) MainActivity.mContext).getChargerConfiguration();
-        textViewChargerId.setText("ID-" + chargerConfiguration.getChargerId());
+        btnLogo.setOnClickListener(this);
+
+        try {
+            textViewChargerId.setText("ID-" + chargerConfiguration.getChargerId());
+        } catch (Exception e) {
+            logger.error("onCreateView error : {}", e.getMessage(), e);
+        }
         return view;
     }
 
@@ -147,7 +128,7 @@ public class HeaderFragment extends Fragment implements View.OnClickListener {
                 }
             });
         } catch (Exception e) {
-            logger.error("HeaderFragment onViewCreated : {}", e.getMessage());
+            logger.error("onViewCreated error : {}", e.getMessage());
         }
     }
 
@@ -158,6 +139,25 @@ public class HeaderFragment extends Fragment implements View.OnClickListener {
             // initialize process
             ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.INIT);
             ((MainActivity) MainActivity.mContext).getClassUiProcess().onHome();
+        } else if (Objects.equals(getId, R.id.btnLogo)) {
+            if (clickedCnt > 8) {
+                try {
+                    UiSeq uiSeq = ((MainActivity) MainActivity.mContext).getClassUiProcess().getUiSeq();
+                    if (Objects.equals(uiSeq, UiSeq.INIT) || Objects.equals(uiSeq, UiSeq.FAULT)) {
+                        ((MainActivity) MainActivity.mContext).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.ADMIN_PASS);
+                                ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.ADMIN_PASS,"ADMIN_PASS",null);
+                            }
+                        });
+                    }
+                    clickedCnt = 0;
+                } catch (Exception e) {
+                    logger.error("btnLogo error : {}", e.getMessage(), e);
+                }
+            }
+            clickedCnt++;
         }
     }
 
@@ -168,7 +168,7 @@ public class HeaderFragment extends Fragment implements View.OnClickListener {
             view.getAnimation().cancel();
             view.clearAnimation();
         } catch (Exception e) {
-            logger.error(" HeaderFragment onDetach error : {}" , e.getMessage());
+            logger.error("onDetach error : {}" , e.getMessage());
         }
     }
 }

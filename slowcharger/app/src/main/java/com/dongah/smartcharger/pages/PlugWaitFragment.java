@@ -121,6 +121,9 @@ public class PlugWaitFragment extends Fragment {
                         public void run() {
                             cnt++;
                             if (Objects.equals(cnt, GlobalVariables.getConnectionTimeOut())) {
+                                countHandler.removeCallbacks(countRunnable);
+                                countHandler.removeCallbacksAndMessages(null);
+                                countHandler.removeMessages(0);
                                 // 충전기 종료
                                 ((MainActivity) MainActivity.mContext).getControlBoard().getTxData().setMainMC(false);
                                 ((MainActivity) MainActivity.mContext).getControlBoard().getTxData().setPwmDuty((short) 100);

@@ -202,7 +202,7 @@ public class ConfigSettingFragment extends Fragment implements View.OnClickListe
             btnExit.setFocusableInTouchMode(true);
             btnExit.requestFocus();
         } catch (Exception e) {
-            logger.error(" ConfigSettingFragment onCreateView {}", e.getMessage());
+            logger.error("onCreateView error : {}", e.getMessage());
         }
         return view;
     }

@@ -170,5 +170,13 @@ public class MemberCardFragment extends Fragment implements View.OnClickListener
     @Override
     public void onDetach() {
         super.onDetach();
+        try {
+            if (countHandler != null) {
+                countHandler.removeCallbacksAndMessages(null);
+                countHandler = null;
+            }
+        } catch (Exception e) {
+            logger.error("onDetach error : {}", e.getMessage(), e);
+        }
     }
 }

@@ -24,6 +24,7 @@ circulrprogress = "1.4.0"
 commonsnet = "3.9.0"
 cardview="1.0.0"
 avloading = "2.3.0"
+desugar = "2.0.4"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -48,6 +49,7 @@ bouncycastle = {group = "org.bouncycastle", name = "bcprov-jdk15on", version.ref
 commonsnet = {module="commons-net:commons-net", version.ref="commonsnet"}
 cardview = {module="androidx.cardview:cardview", version.ref="cardview"}
 avloading = { module = "io.github.maitrungduc1410:AVLoadingIndicatorView", version.ref = "avloading" }
+desugar = { module="com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

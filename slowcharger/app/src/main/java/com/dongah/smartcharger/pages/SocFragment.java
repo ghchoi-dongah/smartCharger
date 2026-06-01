@@ -122,10 +122,10 @@ public class SocFragment extends Fragment implements View.OnClickListener {
     @SuppressLint("DefaultLocale")
     @Override
     public void onClick(View v) {
-        int current = 50 + seekBar.getProgress() * 10 ;
         int getId = v.getId();
+        int current = 50 + seekBar.getProgress() * 10;
         if (Objects.equals(getId, R.id.btnConfirm)) {
-            ((MainActivity) MainActivity.mContext).getChargerConfiguration().setTargetSoc(current);
+            chargingCurrentData.setTargetSoc(current);
             PaymentType paymentType = chargingCurrentData.getPaymentType();
             if (Objects.equals(paymentType, PaymentType.MEMBER)) {
                 ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.MEMBER_CARD);
@@ -147,11 +147,9 @@ public class SocFragment extends Fragment implements View.OnClickListener {
         } else if (Objects.equals(getId, R.id.imgPlus)) {
             seekBar.setProgress(seekBar.getProgress() + 1);
             txtSocInput.setText(String.format("%d%%", 50 + seekBar.getProgress() * 10));
-            chargingCurrentData.setTargetSoc(50 + seekBar.getProgress() * 10);
         } else if (Objects.equals(getId, R.id.imgMinus)) {
             seekBar.setProgress(seekBar.getProgress() -1);
             txtSocInput.setText(String.format("%d%%", 50 + seekBar.getProgress() * 10));
-            chargingCurrentData.setTargetSoc(50 + seekBar.getProgress() * 10);
         }
     }
 
