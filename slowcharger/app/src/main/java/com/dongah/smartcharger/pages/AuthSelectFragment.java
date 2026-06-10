@@ -67,7 +67,6 @@ public class AuthSelectFragment extends Fragment implements View.OnClickListener
     Handler uiCheckHandler;
     SocketReceiveMessage socketReceiveMessage;
 
-
     public AuthSelectFragment() {
         // Required empty public constructor
     }
@@ -159,6 +158,7 @@ public class AuthSelectFragment extends Fragment implements View.OnClickListener
                 ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.MEMBER_CARD, "MEMBER_CARD", null);
             } else if (Objects.equals(getId, R.id.viewNoMember)) {
                 GlobalVariables.setHumaxUserType("B");
+                chargingCurrentData.setPowerUnitPrice(Double.parseDouble(textViewNoMemberUnitInput.getText().toString()));
                 chargingCurrentData.setPaymentType(PaymentType.CREDIT);
                 ((MainActivity) MainActivity.mContext).getClassUiProcess().setUiSeq(UiSeq.SOC);
                 ((MainActivity) MainActivity.mContext).getFragmentChange().onFragmentChange(UiSeq.SOC, "SOC", null);
